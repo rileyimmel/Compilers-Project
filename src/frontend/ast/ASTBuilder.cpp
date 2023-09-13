@@ -28,6 +28,15 @@ std::string ASTBuilder::opString(int op) {
   case TIPParser::GT:
     opStr = ">";
     break;
+  case TIPParser::GTE:
+    opStr = ">=";
+    break;
+	case TIPParser::LT:
+		opStr = "<";
+		break;
+	case TIPParser::LTE:
+		opStr = "<=";
+		break;
   case TIPParser::EQ:
     opStr = "==";
     break;
