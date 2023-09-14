@@ -35,6 +35,7 @@ TEST_CASE("TIP Parser: operators", "[TIP Parser]") {
         x = y / 1;
         x = y % 1;
         x = -1;
+        x = -x;
         x = 1 > 0;
         x = 1 < 0;
         x = 1 <= 0;
