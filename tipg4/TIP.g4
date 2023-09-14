@@ -43,7 +43,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
      | '&' expr					#refExpr
      | expr op=(MUL | DIV) expr 		#multiplicativeExpr
      | expr op=(ADD | SUB) expr 		#additiveExpr
-     | expr op=(GT | GTE | LT | LTE) expr 				#relationalExpr
+     | expr op=(GT | GE | LT | LE) expr 				#relationalExpr
      | expr op=(EQ | NE) expr 			#equalityExpr
      | IDENTIFIER				#varExpr
      | NUMBER					#numExpr
@@ -89,12 +89,13 @@ returnStmt : KRETURN expr ';'  ;
 
 MUL : '*' ;
 DIV : '/' ;
+MOD : '%' ;
 ADD : '+' ;
 SUB : '-' ;
 GT  : '>' ;
-GTE : '>=' ;
+GE : '>=' ;
 LT  : '<' ;
-LTE : '<=' ;
+LE : '<=' ;
 EQ  : '==' ;
 NE  : '!=' ;
 
