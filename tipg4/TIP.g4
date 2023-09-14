@@ -68,6 +68,7 @@ statement : blockStmt
     | assignStmt
     | whileStmt
     | ifStmt
+    | forEachStmt
     | outputStmt
     | errorStmt
 ;
@@ -86,6 +87,7 @@ errorStmt : KERROR expr ';'  ;
 
 returnStmt : KRETURN expr ';'  ;
 
+forEachStmt : KFOR '(' expr ':' expr ')' statement ;
 
 ////////////////////// TIP Lexicon ////////////////////////// 
 
@@ -120,6 +122,7 @@ KERROR  : 'error' ;
 KNOT : 'not' ;
 KAND : 'and' ;
 KOR : 'or' ;
+KFOR : 'for' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;
