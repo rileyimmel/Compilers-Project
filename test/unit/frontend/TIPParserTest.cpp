@@ -189,6 +189,26 @@ TEST_CASE("TIP Parser: fun app higher precedence than deref", "[TIP Parser]") {
   REQUIRE(tree.find(expected) != std::string::npos);
 }
 
+/*** The following should work for sip but fail for tip and thus have been moved up ***/
+
+TEST_CASE("SIP Lexer: new relational op, LE", "[SIP Lexer]") {
+std::stringstream stream;
+stream << R"(
+      operators() { var x; if (x <= 0) x = x + 1; return x; }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Lexer: new op, modulo", "[SIP Lexer]") {
+std::stringstream stream;
+stream << R"(
+      operators() { var x; if (x == 0) x = x % 2; return x; }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
 /************ The following are expected to fail parsing ************/
 
 TEST_CASE("TIP Parser: decl after stmt", "[TIP Parser]") {
@@ -270,24 +290,6 @@ TEST_CASE("TIP Parser: keywords as ids", "[TIP Parser]") {
     )";
 
   REQUIRE_FALSE(ParserHelper::is_parsable(stream));
-}
-
-TEST_CASE("TIP Lexer: illegal comparison token", "[TIP Lexer]") {
-  std::stringstream stream;
-  stream << R"(
-      operators() { var x; if (x <= 0) x = x + 1; return x; }
-    )";
-
-  REQUIRE(ParserHelper::is_parsable(stream));
-}
-
-TEST_CASE("TIP Lexer: illegal operator token", "[TIP Lexer]") {
-  std::stringstream stream;
-  stream << R"(
-      operators() { var x; if (x == 0) x = x % 2; return x; }
-    )";
-
-  REQUIRE(ParserHelper::is_parsable(stream));
 }
 
 TEST_CASE("TIP Lexer: illegal identifier token", "[TIP Lexer]") {
