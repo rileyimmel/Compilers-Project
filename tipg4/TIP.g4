@@ -37,6 +37,7 @@ nameDeclaration : IDENTIFIER ;
 // weeding pass. 
 //
 expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
+     | (INC | DEC) (NUMBER | expr) #incExpr
      | expr '.' IDENTIFIER 			#accessExpr
      | KNOT expr                #notExpr
      | '*' expr 				#deRefExpr
@@ -104,6 +105,8 @@ LT  : '<' ;
 LE : '<=' ;
 EQ  : '==' ;
 NE  : '!=' ;
+INC : '++' ;
+DEC : '--' ;
 
 NUMBER : [0-9]+ ;
 
