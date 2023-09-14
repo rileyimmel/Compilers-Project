@@ -33,8 +33,12 @@ TEST_CASE("TIP Parser: operators", "[TIP Parser]") {
         x = y - 1;
         x = y * 1;
         x = y / 1;
+        x = y % 1;
         x = -1;
         x = 1 > 0;
+        x = 1 < 0;
+        x = 1 <= 0;
+        x = 1 >= 0;
         x = 1 == 0;
         x = 1 != 0;
         return z;
@@ -273,7 +277,7 @@ TEST_CASE("TIP Lexer: illegal comparison token", "[TIP Lexer]") {
       operators() { var x; if (x <= 0) x = x + 1; return x; }
     )";
 
-  REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+  REQUIRE(ParserHelper::is_parsable(stream));
 }
 
 TEST_CASE("TIP Lexer: illegal operator token", "[TIP Lexer]") {
@@ -282,7 +286,7 @@ TEST_CASE("TIP Lexer: illegal operator token", "[TIP Lexer]") {
       operators() { var x; if (x == 0) x = x % 2; return x; }
     )";
 
-  REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+  REQUIRE(ParserHelper::is_parsable(stream));
 }
 
 TEST_CASE("TIP Lexer: illegal identifier token", "[TIP Lexer]") {
