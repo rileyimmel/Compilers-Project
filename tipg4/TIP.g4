@@ -38,6 +38,7 @@ nameDeclaration : IDENTIFIER ;
 //
 expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
      | expr '.' IDENTIFIER 			#accessExpr
+     | KNOT expr                #notExpr
      | '*' expr 				#deRefExpr
      | SUB (NUMBER | expr)				#negNumber
      | '&' expr					#refExpr
@@ -47,6 +48,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
      | expr op=(EQ | NE) expr 			#equalityExpr
      | expr (KAND) expr         #andExpr
      | expr (KOR) expr          #orExpr
+     | expr '?' expr ':' expr   #ternaryExpr
      | IDENTIFIER				#varExpr
      | NUMBER					#numExpr
      | KINPUT					#inputExpr
@@ -115,6 +117,7 @@ KRETURN : 'return' ;
 KNULL   : 'null' ;
 KOUTPUT : 'output' ;
 KERROR  : 'error' ;
+KNOT : 'not' ;
 KAND : 'and' ;
 KOR : 'or' ;
 
