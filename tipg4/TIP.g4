@@ -45,6 +45,8 @@ expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
      | expr op=(ADD | SUB) expr 		#additiveExpr
      | expr op=(GT | GE | LT | LE) expr 				#relationalExpr
      | expr op=(EQ | NE) expr 			#equalityExpr
+     | expr (KAND) expr         #andExpr
+     | expr (KOR) expr          #orExpr
      | IDENTIFIER				#varExpr
      | NUMBER					#numExpr
      | KINPUT					#inputExpr
@@ -113,6 +115,8 @@ KRETURN : 'return' ;
 KNULL   : 'null' ;
 KOUTPUT : 'output' ;
 KERROR  : 'error' ;
+KAND : 'and' ;
+KOR : 'or' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;
