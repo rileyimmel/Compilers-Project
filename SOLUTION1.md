@@ -3,7 +3,10 @@ Features:
 - Boolean
   - Tests:
     - Equivalence:
-      - 
+      - 1 pass in an if: if ( x == true) else if ( x == false)
+      - 1 pass as stored in var: y = true
+      - 1 pass a while cond.: while ( true )
+      - 1 pass as while cond. w/ 'not': while ( not true)
     - Exception:
       - 
     - Boundary:
@@ -12,6 +15,7 @@ Features:
   - Tests:
       - Equivalence:
         - 1 pass: if (not x)
+        - 1 pass as while cond. w/ 'not': while ( not true)
         - 1 fail: x = not y
       - Exception:
         - 
@@ -20,7 +24,10 @@ Features:
 - 'and' & 'or'
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass for and: x = true; y = true; while (x and y)
+        - 1 fail for and: x = true; while (x and @)
+        - 1 pass for or: x = true; y = true; while (x or y)
+        - 1 fail for or: x = true; while (x or @)
       - Exception:
         - 
       - Boundary:
@@ -81,7 +88,8 @@ Features:
 - Ternary, E1 ? E2 : E3
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass test: a = x ? y : z;
+        - 1 fail test: a = x ? @ : z;
       - Exception:
         - 
       - Boundary:
