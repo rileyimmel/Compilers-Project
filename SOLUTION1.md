@@ -11,7 +11,8 @@ Features:
 - Unary 'not'
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass: if (not x)
+        - 1 fail: x = not y
       - Exception:
         - 
       - Boundary:
