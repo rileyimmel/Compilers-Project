@@ -153,6 +153,22 @@ stream << R"(
 REQUIRE(ParserHelper::is_parsable(stream));
 }
 
+TEST_CASE("SIP Parser: ternary", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, x, y, z;
+				x = 1;
+				y = 2;
+				z = 3;
+				a = x ? y : z;
+        return a;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
 /* These tests checks for operator precedence.
  * They access the parse tree and ensure that the higher precedence
  * operator is nested more deeply than the lower precedence operator.
@@ -303,6 +319,22 @@ stream << R"(
 					z = 42;
 				}
         return z;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad ternary", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, x, y, z;
+				x = 1;
+				y = 2;
+				z = 3;
+				a = x ? @ : z;
+        return a;
       }
     )";
 
