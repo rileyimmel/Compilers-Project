@@ -20,6 +20,22 @@ TEST_CASE("SIP Parser: for each", "[SIP Parser]") {
   REQUIRE(ParserHelper::is_parsable(stream));
 }
 
+TEST_CASE("SIP Parser: unary not", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y;
+				y = 0;
+			  if ( not x ) {
+					y = 42;
+				}
+        return y;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
 TEST_CASE("SIP Parser: operators", "[SIP Parser]") {
   std::stringstream stream;
   stream << R"(
@@ -139,6 +155,21 @@ stream << R"(
 						z = z + 1;
 					}
         return z;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+
+TEST_CASE("SIP Parser: bad unary not", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y;
+				y = 0;
+				x = not y
+        return x;
       }
     )";
 
