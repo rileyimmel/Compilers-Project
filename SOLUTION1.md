@@ -1,0 +1,106 @@
+Features:
+
+- Boolean
+  - Tests:
+    - Equivalence:
+      - 
+    - Exception:
+      - 
+    - Boundary:
+      - 
+- Unary 'not'
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- 'and' & 'or'
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- Arrays [E1, ..., En] & [E1 of E2]
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- '#'
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- Array ref. op. E1[E2]
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- '%'
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- '-', arithmetic negation
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- Relational ('<','<=','>=')
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- Ternary, E1 ? E2 : E3
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- E++ & E--
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- Foreach 'for (E1 : E2) S'
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
+- Foreach range 'for (E1 : E2 .. E3 by E4) S'
+  - Tests:
+      - Equivalence:
+        - 
+      - Exception:
+        - 
+      - Boundary:
+        - 
