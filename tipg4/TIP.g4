@@ -50,6 +50,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
      | expr (KAND) expr                     #andExpr
      | expr (KOR) expr                      #orExpr
      | expr '?' expr ':' expr               #ternaryExpr
+     | (KTRUE | KFALSE)                     #booleanExpr
      | IDENTIFIER				            #varExpr
      | NUMBER					            #numExpr
      | KINPUT					            #inputExpr
@@ -72,7 +73,10 @@ statement : blockStmt
     | forEachStmt
     | outputStmt
     | errorStmt
+    | booleanStmt
 ;
+
+booleanStmt : KTRUE | KFALSE;
 
 assignStmt : expr '=' expr ';' ;
 
@@ -126,6 +130,8 @@ KNOT : 'not' ;
 KAND : 'and' ;
 KOR : 'or' ;
 KFOR : 'for' ;
+KTRUE : 'TRUE' ;
+KFALSE : 'FALSE' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;
