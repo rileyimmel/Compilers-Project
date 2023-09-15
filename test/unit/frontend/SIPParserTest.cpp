@@ -54,6 +54,71 @@ TEST_CASE("SIP Parser: operators", "[SIP Parser]") {
   REQUIRE(ParserHelper::is_parsable(stream));
 }
 
+TEST_CASE("SIP Parser: boolean in an if", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y;
+				y = 0;
+			  if ( x == TRUE ) {
+					y = 42;
+				} else if ( x == FALSE ){
+					y = 43;
+				}
+        return y;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: boolean as var", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y;
+				y = 0;
+			  y = TRUE;
+				y = FALSE;
+        return y;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: boolean as while cond.", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y;
+				y = 0;
+			  while ( TRUE ){
+					y = 42;
+				}
+        return y;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: boolean and negation", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y;
+				y = 0;
+			  while ( not TRUE ){
+					y = 42;
+				}
+        return y;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
 /* These tests checks for operator precedence.
  * They access the parse tree and ensure that the higher precedence
  * operator is nested more deeply than the lower precedence operator.
