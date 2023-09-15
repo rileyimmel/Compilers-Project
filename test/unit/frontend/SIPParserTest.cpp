@@ -60,9 +60,9 @@ stream << R"(
       short() {
         var x, y;
 				y = 0;
-			  if ( x == TRUE ) {
+			  if ( x == true ) {
 					y = 42;
-				} else if ( x == FALSE ){
+				} else if ( x == false ){
 					y = 43;
 				}
         return y;
@@ -78,8 +78,8 @@ stream << R"(
       short() {
         var x, y;
 				y = 0;
-			  y = TRUE;
-				y = FALSE;
+			  y = true;
+				y = false;
         return y;
       }
     )";
@@ -93,7 +93,7 @@ stream << R"(
       short() {
         var x, y;
 				y = 0;
-			  while ( TRUE ){
+			  while ( true ){
 					y = 42;
 				}
         return y;
@@ -109,7 +109,7 @@ stream << R"(
       short() {
         var x, y;
 				y = 0;
-			  while ( not TRUE ){
+			  while ( not true ){
 					y = 42;
 				}
         return y;
@@ -124,8 +124,8 @@ std::stringstream stream;
 stream << R"(
       short() {
         var x, y, z;
-				y = TRUE;
-				x = TRUE;
+				y = true;
+				x = true;
 			  while ( x and y ){
 					z = 42;
 				}
@@ -141,8 +141,8 @@ std::stringstream stream;
 stream << R"(
       short() {
         var x, y, z;
-				y = TRUE;
-				x = TRUE;
+				y = true;
+				x = true;
 			  while ( x or y ){
 					z = 42;
 				}
@@ -280,8 +280,8 @@ std::stringstream stream;
 stream << R"(
       short() {
         var x, y, z;
-				y = TRUE;
-				x = TRUE;
+				y = true;
+				x = true;
 			  while ( x and @ ){
 					z = 42;
 				}
@@ -297,8 +297,8 @@ std::stringstream stream;
 stream << R"(
       short() {
         var x, y, z;
-				y = TRUE;
-				x = TRUE;
+				y = true;
+				x = true;
 			  while ( x or @ ){
 					z = 42;
 				}
