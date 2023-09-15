@@ -51,7 +51,9 @@ Features:
 - '%'
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass test: x = y % 1
+        - 1 lexer pass test
+        - 1 fail test: x = y % @
       - Exception:
         - 
       - Boundary:
@@ -59,7 +61,8 @@ Features:
 - '-', arithmetic negation
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass test: x = -x
+        - 1 fail test: x = -@
       - Exception:
         - 
       - Boundary:
@@ -67,7 +70,9 @@ Features:
 - Relational ('<','<=','>=')
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass test for each op: x = NUMBER op NUMBER
+        - 1 lexer pass test for LE
+        - 1 fail test for each op: x = 1 op @
       - Exception:
         - 
       - Boundary:
@@ -91,7 +96,8 @@ Features:
 - Foreach 'for (E1 : E2) S'
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass test: expr : expr
+        - 1 fail test: expr : @
       - Exception:
         - 
       - Boundary:
