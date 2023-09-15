@@ -136,6 +136,23 @@ stream << R"(
 REQUIRE(ParserHelper::is_parsable(stream));
 }
 
+TEST_CASE("SIP Parser: or", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y, z;
+				y = TRUE;
+				x = TRUE;
+			  while ( x or y ){
+					z = 42;
+				}
+        return z;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
 /* These tests checks for operator precedence.
  * They access the parse tree and ensure that the higher precedence
  * operator is nested more deeply than the lower precedence operator.
@@ -266,6 +283,23 @@ stream << R"(
 				y = TRUE;
 				x = TRUE;
 			  while ( x and @ ){
+					z = 42;
+				}
+        return z;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad or", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y, z;
+				y = TRUE;
+				x = TRUE;
+			  while ( x or @ ){
 					z = 42;
 				}
         return z;
