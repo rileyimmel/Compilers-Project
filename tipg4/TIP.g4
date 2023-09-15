@@ -130,8 +130,8 @@ KNOT : 'not' ;
 KAND : 'and' ;
 KOR : 'or' ;
 KFOR : 'for' ;
-KTRUE : 'TRUE' ;
-KFALSE : 'FALSE' ;
+KTRUE : 'true' ;
+KFALSE : 'false' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;
