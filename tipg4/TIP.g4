@@ -73,10 +73,7 @@ statement : blockStmt
     | forEachStmt
     | outputStmt
     | errorStmt
-    | booleanStmt
 ;
-
-booleanStmt : KTRUE | KFALSE;
 
 assignStmt : expr '=' expr ';' ;
 
