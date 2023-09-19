@@ -210,6 +210,20 @@ stream << R"(
 REQUIRE(ParserHelper::is_parsable(stream));
 }
 
+TEST_CASE("SIP Parser: len op", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [0, 1];
+				b = #a;
+        return a;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
 /* These tests checks for operator precedence.
  * They access the parse tree and ensure that the higher precedence
  * operator is nested more deeply than the lower precedence operator.
@@ -456,6 +470,20 @@ stream << R"(
         var a, b, c;
 				a = [0, 1];
 				b = @[0];
+        return a;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad len op", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [0, 1];
+				b = #@;
         return a;
       }
     )";
