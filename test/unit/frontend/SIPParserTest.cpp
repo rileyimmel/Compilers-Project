@@ -254,6 +254,19 @@ stream << R"(
 REQUIRE(ParserHelper::is_parsable(stream));
 }
 
+TEST_CASE("SIP Parser: array of", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [5 of 3];
+        return a;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
+}
+
 /* These tests checks for operator precedence.
  * They access the parse tree and ensure that the higher precedence
  * operator is nested more deeply than the lower precedence operator.
@@ -560,6 +573,32 @@ stream << R"(
 			 	  z = z + 1;
 			  }
         return z;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad array of, non expr", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [5 of @];
+        return a;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad array of, missing expr", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [5 of ];
+        return a;
       }
     )";
 

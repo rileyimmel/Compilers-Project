@@ -50,6 +50,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
      | expr (KOR) expr                          #orExpr
      | expr '?' expr ':' expr                   #ternaryExpr
      | LSB (expr (',' expr)*)? RSB              #arrExpr
+     | LSB expr KOF expr RSB                    #arrOfExpr
      | expr LSB expr RSB                        #arrElemRefExpr
      | LEN expr                                 #lenExpr
      | (KTRUE | KFALSE)                         #booleanExpr
@@ -144,6 +145,7 @@ KFOR : 'for' ;
 KTRUE : 'true' ;
 KFALSE : 'false' ;
 KBY : 'by' ;
+KOF : 'of' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;
