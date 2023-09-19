@@ -37,7 +37,6 @@ nameDeclaration : IDENTIFIER ;
 // weeding pass. 
 //
 expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
-     | NUMBER (INC | DEC)                   #incExpr
      | expr '.' IDENTIFIER 			        #accessExpr
      | KNOT expr                            #notExpr
      | '*' expr 				            #deRefExpr
@@ -67,6 +66,8 @@ fieldExpr : IDENTIFIER ':' expr ;
 ////////////////////// TIP Statements ////////////////////////// 
 
 statement : blockStmt
+    | incStmt
+    | decStmt
     | assignStmt
     | whileStmt
     | ifStmt
@@ -88,6 +89,10 @@ outputStmt : KOUTPUT expr ';'  ;
 errorStmt : KERROR expr ';'  ;
 
 returnStmt : KRETURN expr ';'  ;
+
+incStmt : expr INC ';' ;
+
+decStmt : expr DEC ';' ;
 
 forEachStmt : KFOR '(' expr ':' expr ')' statement ;
 

@@ -97,7 +97,8 @@ Features:
 - E++ & E--
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass test each: x++; x--;
+        - 1 fail test each: @++; @--;
       - Exception:
         - 
       - Boundary:
