@@ -49,6 +49,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
      | expr (KAND) expr                     #andExpr
      | expr (KOR) expr                      #orExpr
      | expr '?' expr ':' expr               #ternaryExpr
+     | LEN expr                             #lenExpr
      | (KTRUE | KFALSE)                     #booleanExpr
      | IDENTIFIER				            #varExpr
      | NUMBER					            #numExpr
@@ -113,6 +114,7 @@ EQ  : '==' ;
 NE  : '!=' ;
 INC : '++' ;
 DEC : '--' ;
+LEN : '#';
 
 NUMBER : [0-9]+ ;
 
