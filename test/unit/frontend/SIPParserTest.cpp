@@ -195,13 +195,14 @@ stream << R"(
 REQUIRE(ParserHelper::is_parsable(stream));
 }
 
-TEST_CASE("SIP Parser: array", "[SIP Parser]") {
+TEST_CASE("SIP Parser: array and array index", "[SIP Parser]") {
 std::stringstream stream;
 stream << R"(
       short() {
         var a, b, c;
 				a = [0, 1];
 				b = [];
+				c = a[0];
         return a;
       }
     )";
@@ -401,6 +402,61 @@ stream << R"(
         var x;
 			  @--;
         return x;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad array decl. right side", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [0,];
+        return a;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream)
+);
+}
+
+TEST_CASE("SIP Parser: bad array decl. left side", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				@ = [0, 1];
+        return a;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad array element reference inside", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [0, 1];
+				b = a[@];
+        return a;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: bad array element reference outside", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var a, b, c;
+				a = [0, 1];
+				b = @[0];
+        return a;
       }
     )";
 

@@ -36,29 +36,30 @@ nameDeclaration : IDENTIFIER ;
 // issues elsewhere in the compiler, e.g.,  introducing an assignable expr
 // weeding pass. 
 //
-expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
-     | expr '.' IDENTIFIER 			        #accessExpr
-     | KNOT expr                            #notExpr
-     | '*' expr 				            #deRefExpr
-     | SUB (NUMBER | expr)				    #negNumber
-     | '&' expr					            #refExpr
-     | expr op=(MUL | DIV | MOD) expr 		#multiplicativeExpr
-     | expr op=(ADD | SUB) expr 		    #additiveExpr
-     | expr op=(GT | GE | LT | LE) expr 	#relationalExpr
-     | expr op=(EQ | NE) expr 			    #equalityExpr
-     | expr (KAND) expr                     #andExpr
-     | expr (KOR) expr                      #orExpr
-     | expr '?' expr ':' expr               #ternaryExpr
-     | LSB (expr (',' expr)*)? RSB          #arrExpr
-     | LEN expr                             #lenExpr
-     | (KTRUE | KFALSE)                     #booleanExpr
-     | IDENTIFIER				            #varExpr
-     | NUMBER					            #numExpr
-     | KINPUT					            #inputExpr
-     | KALLOC expr				            #allocExpr
-     | KNULL					            #nullExpr
-     | recordExpr				            #recordRule
-     | '(' expr ')'				            #parenExpr
+expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
+     | expr '.' IDENTIFIER 			            #accessExpr
+     | KNOT expr                                #notExpr
+     | '*' expr 				                #deRefExpr
+     | SUB (NUMBER | expr)				        #negNumber
+     | '&' expr					                #refExpr
+     | expr op=(MUL | DIV | MOD) expr 		    #multiplicativeExpr
+     | expr op=(ADD | SUB) expr 		        #additiveExpr
+     | expr op=(GT | GE | LT | LE) expr 	    #relationalExpr
+     | expr op=(EQ | NE) expr 			        #equalityExpr
+     | expr (KAND) expr                         #andExpr
+     | expr (KOR) expr                          #orExpr
+     | expr '?' expr ':' expr                   #ternaryExpr
+     | LSB (expr (',' expr)*)? RSB              #arrExpr
+     | expr LSB expr RSB                        #arrElemRefExpr
+     | LEN expr                                 #lenExpr
+     | (KTRUE | KFALSE)                         #booleanExpr
+     | IDENTIFIER				                #varExpr
+     | NUMBER					                #numExpr
+     | KINPUT					                #inputExpr
+     | KALLOC expr				                #allocExpr
+     | KNULL					                #nullExpr
+     | recordExpr				                #recordRule
+     | '(' expr ')'				                #parenExpr
 ;
 
 recordExpr : '{' (fieldExpr (',' fieldExpr)*)? '}' ;
