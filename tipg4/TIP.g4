@@ -75,6 +75,7 @@ statement : blockStmt
     | whileStmt
     | ifStmt
     | forEachStmt
+    | forRangeStmt
     | outputStmt
     | errorStmt
 ;
@@ -98,6 +99,8 @@ incStmt : expr INC ';' ;
 decStmt : expr DEC ';' ;
 
 forEachStmt : KFOR '(' expr ':' expr ')' statement ;
+
+forRangeStmt : KFOR '(' expr ':' expr '..' expr (KBY expr)? ')' statement;
 
 ////////////////////// TIP Lexicon ////////////////////////// 
 
@@ -140,6 +143,7 @@ KOR : 'or' ;
 KFOR : 'for' ;
 KTRUE : 'true' ;
 KFALSE : 'false' ;
+KBY : 'by' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;

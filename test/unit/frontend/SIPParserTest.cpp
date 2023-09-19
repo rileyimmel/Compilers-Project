@@ -10,7 +10,7 @@ TEST_CASE("SIP Parser: for each", "[SIP Parser]") {
   stream << R"(
       short() {
         var x, y, z;
-			  for ( x : x ) {
+			  for (x : x) {
 			 	  z = z + 1;
 			  }
         return z;
@@ -18,6 +18,36 @@ TEST_CASE("SIP Parser: for each", "[SIP Parser]") {
     )";
 
   REQUIRE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: for range", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y, z;
+			  for (x : 0 .. 4 by 1) {
+			 	  z = z + 1;
+			  }
+				for (x : 0 .. 4) {
+			 	  z = z + 1;
+			  }
+				for (0 : 0 .. 4 by 1) {
+			 	  z = z + 1;
+			  }
+				for (0 : 0 .. 4) {
+			 	  z = z + 1;
+			  }
+				for (x : y .. z by x) {
+			 	  z = z + 1;
+			  }
+				for (x : y .. z) {
+			 	  z = z + 1;
+			  }
+        return z;
+      }
+    )";
+
+REQUIRE(ParserHelper::is_parsable(stream));
 }
 
 TEST_CASE("SIP Parser: inc", "[SIP Parser]") {
@@ -485,6 +515,51 @@ stream << R"(
 				a = [0, 1];
 				b = #@;
         return a;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: for range without ..", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y, z;
+			  for (x : 0 4 by 1) {
+			 	  z = z + 1;
+			  }
+        return z;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: for range non-expr", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y, z;
+			  for (x : 0 .. 4 by @) {
+			 	  z = z + 1;
+			  }
+        return z;
+      }
+    )";
+
+REQUIRE_FALSE(ParserHelper::is_parsable(stream));
+}
+
+TEST_CASE("SIP Parser: for range missing required expr", "[SIP Parser]") {
+std::stringstream stream;
+stream << R"(
+      short() {
+        var x, y, z;
+			  for (x : .. 4 by 1) {
+			 	  z = z + 1;
+			  }
+        return z;
       }
     )";
 
