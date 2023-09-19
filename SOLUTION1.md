@@ -35,7 +35,10 @@ Features:
 - Arrays [E1, ..., En] & [E1 of E2]
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass for first style: a = [0,1]; b = [];
+        - 2 fail for first style: a = [0,]; @ = [0,1];
+        - 1 pass for of style: a = [5 of 3];
+        - 2 fail for of style: a = [5 of @]; a = [5 of ];
       - Exception:
         - 
       - Boundary:
@@ -43,7 +46,8 @@ Features:
 - '#'
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass: a = [0,1]; b = #a;
+        - 1 fail: a = [0,1]; b = #@;
       - Exception:
         - 
       - Boundary:
@@ -51,7 +55,8 @@ Features:
 - Array ref. op. E1[E2]
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass: b = a[0];
+        - 2 fail: b = a[@]; b = @[0];
       - Exception:
         - 
       - Boundary:
@@ -115,7 +120,8 @@ Features:
 - Foreach range 'for (E1 : E2 .. E3 by E4) S'
   - Tests:
       - Equivalence:
-        - 
+        - 1 pass: varying versions: all exprs as vars, as numbers, mixed. Each version has a loop with and without the by keyword
+        - 3 fail: without the '..', 1 of the 4 exprs is not an expr, missing 1 of 3 required exprs
       - Exception:
         - 
       - Boundary:
