@@ -586,6 +586,65 @@ REQUIRE_FALSE(ParserHelper::is_parsable(stream));
 
 /*------------------------------*/
 
+TEST_CASE("SIP Lexer: mul / div operator associativity, pt1", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 * 2 / 3; })";
+    std::string expected = "(expr (expr 1) * (expr 2)) / (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+
+TEST_CASE("SIP Lexer: mul / div operator associativity, pt2", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 / 2 * 3; })";
+    std::string expected = "(expr (expr 1) / (expr 2)) * (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+
+TEST_CASE("SIP Lexer: mul / mod operator associativity, pt1", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 % 2 * 3; })";
+    std::string expected = "(expr (expr 1) % (expr 2)) * (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+
+TEST_CASE("SIP Lexer: mul / mod operator associativity, pt2", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 * 2 % 3; })";
+    std::string expected = "(expr (expr 1) * (expr 2)) % (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+//thus, we know that the mul, mod, and div operators are lexically equivalent, with left to right associativity.
+
+TEST_CASE("SIP Lexer: add / sub operator associativity, pt1", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 + 2 - 3; })";
+    std::string expected = "(expr (expr 1) + (expr 2)) - (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+
+TEST_CASE("SIP Lexer: add / sub operator associativity, pt2", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 - 2 + 3; })";
+    std::string expected = "(expr (expr 1) - (expr 2)) + (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+//thus, we know that the add and sub operators are lexically equivalent, with left to right associativity.
+
+TEST_CASE("SIP Lexer: mul / add operator precedence test", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 + 2 * 3; })";
+    std::string expected = "(expr (expr 1) + (expr (expr 2) * (expr 3)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+
+// these tests check new operators.
 TEST_CASE("SIP Lexer: new relational op, LE", "[SIP Lexer]") {
 std::stringstream stream;
 stream << R"(
