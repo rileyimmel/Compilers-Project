@@ -28,12 +28,24 @@ std::string ASTBuilder::opString(int op) {
   case TIPParser::GT:
     opStr = ">";
     break;
+  case TIPParser::GE:
+    opStr = ">=";
+    break;
+	case TIPParser::LT:
+		opStr = "<";
+		break;
+	case TIPParser::LE:
+		opStr = "<=";
+		break;
   case TIPParser::EQ:
     opStr = "==";
     break;
   case TIPParser::NE:
     opStr = "!=";
     break;
+  case TIPParser::MOD:
+      opStr = "%";
+      break;
   default:
     throw std::runtime_error(
         "unknown operator :" +

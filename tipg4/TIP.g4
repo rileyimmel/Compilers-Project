@@ -36,22 +36,31 @@ nameDeclaration : IDENTIFIER ;
 // issues elsewhere in the compiler, e.g.,  introducing an assignable expr
 // weeding pass. 
 //
-expr : expr '(' (expr (',' expr)*)? ')' 	#funAppExpr
-     | expr '.' IDENTIFIER 			#accessExpr
-     | '*' expr 				#deRefExpr
-     | SUB NUMBER				#negNumber
-     | '&' expr					#refExpr
-     | expr op=(MUL | DIV) expr 		#multiplicativeExpr
-     | expr op=(ADD | SUB) expr 		#additiveExpr
-     | expr op=GT expr 				#relationalExpr
-     | expr op=(EQ | NE) expr 			#equalityExpr
-     | IDENTIFIER				#varExpr
-     | NUMBER					#numExpr
-     | KINPUT					#inputExpr
-     | KALLOC expr				#allocExpr
-     | KNULL					#nullExpr
-     | recordExpr				#recordRule
-     | '(' expr ')'				#parenExpr
+expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
+     | expr '.' IDENTIFIER 			            #accessExpr
+     | KNOT expr                                #notExpr
+     | '*' expr 				                #deRefExpr
+     | SUB (NUMBER | expr)				        #negNumber
+     | '&' expr					                #refExpr
+     | expr op=(MUL | DIV | MOD) expr 		    #multiplicativeExpr
+     | expr op=(ADD | SUB) expr 		        #additiveExpr
+     | expr op=(GT | GE | LT | LE) expr 	    #relationalExpr
+     | expr op=(EQ | NE) expr 			        #equalityExpr
+     | expr (KAND) expr                         #andExpr
+     | expr (KOR) expr                          #orExpr
+     | <assoc=right> expr '?' expr ':' expr     #ternaryExpr
+     | LSB (expr (',' expr)*)? RSB              #arrExpr
+     | LSB expr KOF expr RSB                    #arrOfExpr
+     | expr LSB expr RSB                        #arrElemRefExpr
+     | LEN expr                                 #lenExpr
+     | (KTRUE | KFALSE)                         #booleanExpr
+     | IDENTIFIER				                #varExpr
+     | NUMBER					                #numExpr
+     | KINPUT					                #inputExpr
+     | KALLOC expr				                #allocExpr
+     | KNULL					                #nullExpr
+     | recordExpr				                #recordRule
+     | '(' expr ')'				                #parenExpr
 ;
 
 recordExpr : '{' (fieldExpr (',' fieldExpr)*)? '}' ;
@@ -61,9 +70,13 @@ fieldExpr : IDENTIFIER ':' expr ;
 ////////////////////// TIP Statements ////////////////////////// 
 
 statement : blockStmt
+    | incStmt
+    | decStmt
     | assignStmt
     | whileStmt
     | ifStmt
+    | forEachStmt
+    | forRangeStmt
     | outputStmt
     | errorStmt
 ;
@@ -82,6 +95,13 @@ errorStmt : KERROR expr ';'  ;
 
 returnStmt : KRETURN expr ';'  ;
 
+incStmt : expr INC ';' ;
+
+decStmt : expr DEC ';' ;
+
+forEachStmt : KFOR '(' expr ':' expr ')' statement ;
+
+forRangeStmt : KFOR '(' expr ':' expr '..' expr (KBY expr)? ')' statement;
 
 ////////////////////// TIP Lexicon ////////////////////////// 
 
@@ -89,11 +109,20 @@ returnStmt : KRETURN expr ';'  ;
 
 MUL : '*' ;
 DIV : '/' ;
+MOD : '%' ;
 ADD : '+' ;
 SUB : '-' ;
 GT  : '>' ;
+GE : '>=' ;
+LT  : '<' ;
+LE : '<=' ;
 EQ  : '==' ;
 NE  : '!=' ;
+INC : '++' ;
+DEC : '--' ;
+LEN : '#';
+LSB : '[';
+RSB : ']';
 
 NUMBER : [0-9]+ ;
 
@@ -109,6 +138,14 @@ KRETURN : 'return' ;
 KNULL   : 'null' ;
 KOUTPUT : 'output' ;
 KERROR  : 'error' ;
+KNOT : 'not' ;
+KAND : 'and' ;
+KOR : 'or' ;
+KFOR : 'for' ;
+KTRUE : 'true' ;
+KFALSE : 'false' ;
+KBY : 'by' ;
+KOF : 'of' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;

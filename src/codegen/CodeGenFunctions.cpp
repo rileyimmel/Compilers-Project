@@ -496,7 +496,19 @@ llvm::Value *ASTBinaryExpr::codegen() {
     auto *cmp = Builder.CreateICmpSGT(L, R, "_gttmp");
     return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
                                  false, "gttmp");
-  } else if (getOp() == "==") {
+  } else if (getOp() == "<") {
+		auto *cmp = Builder.CreateICmpSLT(L, R, "-lttmp");
+		return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
+																 false, "lttmp");
+	} else if (getOp() == ">=") {
+		auto *cmp = Builder.CreateICmpSGE(L, R, "-getmp");
+		return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
+																 false, "getmp");
+	} else if (getOp() == "<=") {
+		auto *cmp = Builder.CreateICmpSLE(L, R, "-letmp");
+		return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
+																 false, "letmp");
+	} else if (getOp() == "==") {
     auto *cmp = Builder.CreateICmpEQ(L, R, "_eqtmp");
     return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
                                  false, "eqtmp");
@@ -505,7 +517,7 @@ llvm::Value *ASTBinaryExpr::codegen() {
     return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
                                  false, "neqtmp");
   } else {
-    throw InternalError("Invalid binary operator: " + OP);
+    throw InternalError("Hi Invalid binary operator: " + OP);
   }
 }
 
