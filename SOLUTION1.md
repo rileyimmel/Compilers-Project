@@ -1,128 +1,20 @@
-Features:
+# Deliverable 1: TIP Parser Expansion
+In this part of the project, we extended the existing TIP parser to add the features below and thus make it the SIP Parser.
+- Arrays, a length operator, and array referencing
+- Boolean operations (true, false, not, and, or)
+- Modulo and negation operators
+- Ternary conditional expressions
+- Increment and decrement statements
+- For loops of iterator and range style
 
-- Boolean
-  - Tests:
-    - Equivalence:
-      - 1 pass in an if: if ( x == true) else if ( x == false)
-      - 1 pass as stored in var: y = true
-      - 1 pass a while cond.: while ( true )
-      - 1 pass as while cond. w/ 'not': while ( not true)
-    - Exception:
-      - 
-    - Boundary:
-      - 
-- Unary 'not'
-  - Tests:
-      - Equivalence:
-        - 1 pass: if (not x)
-        - 1 pass as while cond. w/ 'not': while ( not true)
-        - 1 fail: x = not y
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- 'and' & 'or'
-  - Tests:
-      - Equivalence:
-        - 1 pass for and: x = true; y = true; while (x and y)
-        - 1 fail for and: x = true; while (x and @)
-        - 1 pass for or: x = true; y = true; while (x or y)
-        - 1 fail for or: x = true; while (x or @)
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- Arrays [E1, ..., En] & [E1 of E2]
-  - Tests:
-      - Equivalence:
-        - 1 pass for first style: a = [0,1]; b = [];
-        - 2 fail for first style: a = [0,]; @ = [0,1];
-        - 1 pass for of style: a = [5 of 3];
-        - 2 fail for of style: a = [5 of @]; a = [5 of ];
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- '#'
-  - Tests:
-      - Equivalence:
-        - 1 pass: a = [0,1]; b = #a;
-        - 1 fail: a = [0,1]; b = #@;
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- Array ref. op. E1[E2]
-  - Tests:
-      - Equivalence:
-        - 1 pass: b = a[0];
-        - 2 fail: b = a[@]; b = @[0];
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- '%'
-  - Tests:
-      - Equivalence:
-        - 1 pass test: x = y % 1
-        - 1 lexer pass test
-        - 1 fail test: x = y % @
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- '-', arithmetic negation
-  - Tests:
-      - Equivalence:
-        - 1 pass test: x = -x
-        - 1 fail test: x = -@
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- Relational ('<','<=','>=')
-  - Tests:
-      - Equivalence:
-        - 1 pass test for each op: x = NUMBER op NUMBER
-        - 1 lexer pass test for LE
-        - 1 fail test for each op: x = 1 op @
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- Ternary, E1 ? E2 : E3
-  - Tests:
-      - Equivalence:
-        - 1 pass test: a = x ? y : z;
-        - 1 fail test: a = x ? @ : z;
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- E++ & E--
-  - Tests:
-      - Equivalence:
-        - 1 pass test each: x++; x--;
-        - 1 fail test each: @++; @--;
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- Foreach 'for (E1 : E2) S'
-  - Tests:
-      - Equivalence:
-        - 1 pass test: expr : expr
-        - 1 fail test: expr : @
-      - Exception:
-        - 
-      - Boundary:
-        - 
-- Foreach range 'for (E1 : E2 .. E3 by E4) S'
-  - Tests:
-      - Equivalence:
-        - 1 pass: varying versions: all exprs as vars, as numbers, mixed. Each version has a loop with and without the by keyword
-        - 3 fail: without the '..', 1 of the 4 exprs is not an expr, missing 1 of 3 required exprs
-      - Exception:
-        - 
-      - Boundary:
-        - 
+# Challenges
+We never faced any big challenges with this part of the project. There were a few things that stumped us a little, but we were always able to figure out how to solve/implement them within an hour or two. Some of these were features like inc/dec and ternary, specifically with its associativity.
+
+# Testing Approach
+In terms of testing, we used a loosely inverted TDD approach. We would first add a new feature to the grammar how we thought would work. We would then write at least 1 passing test, ensure it passed, then write at least 1 failing test.
+
+We wrote these tests in a new unit test file SIPParserTest.cpp. This method of testing covered mainly equivalence tests as we were unsure how/if it is possible to do boundary or exception testing at the parse level.
+
+In the process of updating the grammar, a few tests in the provided TIPParserTest.cpp file began to fail as we introduced new operators, specifically operators these tests were written to ensure did not parse. When these would arise, we simply removed those tests from the TIPParserTest.cpp file as they were covered in SIPParserTest.cpp anyway.
+
+Once we had implemented all the new features and wrote equivalence tests, we began to ensure we had our grammar precedence set up correctly by writing tests focused on precedence for all the new features. In this process, we discovered there was some associativity issues, particularly with the ternary and so updated it accordingly.
