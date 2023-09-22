@@ -656,6 +656,7 @@ TEST_CASE("SIP Lexer: checking equal relational operator associativity", "[SIP L
         b = 16 >= 17 < 18;
         c = 19 <= 20 >= 21;
         d = 22 > 23 <= 24;
+        return 0;
     })";
     std::string expected1 = "(expr (expr 1) > (expr 2)) < (expr 3))";
     std::string expected2 = "(expr (expr 4) < (expr 5)) >= (expr 6))";
@@ -683,6 +684,7 @@ TEST_CASE("SIP Lexer: checking additive / relational operator precedence", "[SIP
         var x, y;
         x = 1 + 2 >= 3;
         y = 4 < 5 - 6;
+        return 0;
     })";
     std::string expected1 = "(expr (expr 1) + (expr 2)) >= (expr 3))";
     std::string expected2 = "(expr (expr 4) < (expr (expr 5) - (expr 6)))";
@@ -698,6 +700,7 @@ TEST_CASE("SIP Lexer: checking eq / ne operator associativity", "[SIP Lexer]") {
         var x, y;
         x = 1 == 2 != 3;
         y = 4 != 5 == 6;
+        return 0;
     })";
     std::string expected1 = "(expr (expr 1) == (expr 2)) != (expr 3))";
     std::string expected2 = "(expr (expr 4) != (expr 5)) == (expr 6))";
@@ -713,9 +716,119 @@ TEST_CASE("SIP Lexer: checking relational / equality operator precedence", "[SIP
         var x, y;
         x = 1 >= 2 != 3;
         y = 4 == 5 < 6;
+        return 0;
     })";
     std::string expected1 = "(expr (expr 1) >= (expr 2)) != (expr 3))";
     std::string expected2 = "(expr (expr 4) == (expr (expr 5) < (expr 6)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking equality / and operator precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = 1 != 2 and 3;
+        y = 4 and 5 == 6;
+        return 0;
+    })";
+    std::string expected1 = "(expr (expr 1) != (expr 2)) and (expr 3))";
+    std::string expected2 = "(expr (expr 4) and (expr (expr 5) == (expr 6)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking and associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x;
+        x = 1 and 2 and 3;
+        return 0;
+    })";
+    std::string expected = "(expr (expr 1) and (expr 2)) and (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking or associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x;
+        x = 1 or 2 or 3;
+        return 0;
+    })";
+    std::string expected = "(expr (expr 1) or (expr 2)) or (expr 3))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking ternary associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = 1 ? 2 : 3 ? 4 : 5;
+        y = 11 ? 12 ? 13 : 14 : 15;
+        return 0;
+    })";
+    std::string expected1 = "(expr (expr 1) ? (expr 2) : (expr (expr 3) ? (expr 4) : (expr 5))";
+    std::string expected2 = "(expr (expr 11) ? (expr (expr 12) ? (expr 13) : (expr 14)) : (expr 15))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking and / or operator precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = 1 and 2 or 3;
+        y = 4 or 5 and 6;
+        return 0;
+    })";
+    std::string expected1 = "(expr (expr 1) and (expr 2)) or (expr 3))";
+    std::string expected2 = "(expr (expr 4) or (expr (expr 5) and (expr 6)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking or / ternary operator precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y, z;
+        x = 1 or 2 ? 3 : 4;
+        y = 5 ? 6 or 7 : 8;
+        z = 9 ? 10 : 11 or 12;
+        return 0;
+    })";
+    std::string expected1 = "(expr (expr (expr 1) or (expr 2)) ? (expr 3) : (expr 4))";
+    std::string expected2 = "(expr (expr 5) ? (expr (expr 6) or (expr 7)) : (expr 8))";
+    std::string expected3 = "(expr (expr 9) ? (expr 10) : (expr (expr 11) or (expr 12)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos &&
+                tree.find(expected3) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking ternary / array initialization precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = [1, 2 ? 3 : 4];
+        y = [5 ? 6 : 7, 8];
+        return 0;
+    })";
+    std::string expected1 = "(expr [ (expr 1) , (expr (expr 2) ? (expr 3) : (expr 4)) ])";
+    std::string expected2 = "(expr [ (expr (expr 5) ? (expr 6) : (expr 7)) , (expr 8) ])";
     std::string tree = ParserHelper::parsetree(stream);
     bool test = tree.find(expected1) != std::string::npos &&
                 tree.find(expected2) != std::string::npos;
