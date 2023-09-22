@@ -835,6 +835,96 @@ TEST_CASE("SIP Lexer: checking ternary / array initialization precedence", "[SIP
     REQUIRE(test);
 }
 
+TEST_CASE("SIP Lexer: checking array of associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = [1 of [2 of 3]];
+        y = [[4 of 5] of 6];
+        return 0;
+    })";
+    std::string expected1 = "(expr [ (expr 1) of (expr [ (expr 2) of (expr 3)  ]) ])";
+    std::string expected2 = "(expr [ (expr [ (expr 4) of (expr 5) ]) of (expr 6) ])";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos;
+    bool test2 = tree.find(expected2) != std::string::npos;
+    REQUIRE(test | test2);
+}
+
+TEST_CASE("SIP Lexer: checking array of precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = [1, [2 of 3]];
+        y = [[4 of 5], 6];
+        return 0;
+    })";
+    std::string expected1 = "(expr [ (expr 1) , (expr [ (expr 2) of (expr 3) ]) ])";
+    std::string expected2 = "(expr [ (expr [ (expr 4) of (expr 5) ]) , (expr 6) ])";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos;
+    bool test2 = tree.find(expected2) != std::string::npos;
+    REQUIRE(test | test2);
+}
+
+TEST_CASE("SIP Lexer: checking array indexing associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = 1[2[3]];
+        return 0;
+    })";
+    std::string expected = "(expr (expr 1) [ (expr (expr 2) [ (expr 3) ]) ])";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking array length associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, a;
+        a = [[1,2,3], [4,5,6]];
+        x = ##a;
+        return 0;
+    })";
+    std::string expected = "(expr # (expr # (expr a)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking array length precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, a;
+        a = [[1,2,3], [4,5,6]];
+        x = #a[1];
+        return 0;
+    })";
+    std::string expected = "(expr # (expr (expr a) [ (expr 1) ]))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking array index / array of precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y, a;
+        a = [1, 2, 3];
+        x = [5 of a[1]];
+        y = [a[2] of 4];
+        return 0;
+    })";
+    std::string expected1 = "(expr [ (expr 5) of (expr (expr a) [ (expr 1) ]) ])";
+    std::string expected2 = "(expr [ (expr (expr a) [ (expr 2) ]) of (expr 4) ])";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
 TEST_CASE("SIP Lexer: add higher precedence than gt", "[SIP Lexer]") {
     std::stringstream stream;
     stream << R"(main() { return 1 > 2 + 3; })";
