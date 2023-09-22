@@ -644,6 +644,92 @@ TEST_CASE("SIP Lexer: mul / add operator precedence test", "[SIP Lexer]") {
     REQUIRE(tree.find(expected) != std::string::npos);
 }
 
+TEST_CASE("SIP Lexer: checking equal relational operator associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y, z, w, a, b, c, d;
+        x = 1 > 2 < 3;
+        y = 4 < 5 >= 6;
+        z = 7 >= 8 <= 9;
+        w = 10 <= 11 > 12;
+        a = 13 < 14 > 15;
+        b = 16 >= 17 < 18;
+        c = 19 <= 20 >= 21;
+        d = 22 > 23 <= 24;
+    })";
+    std::string expected1 = "(expr (expr 1) > (expr 2)) < (expr 3))";
+    std::string expected2 = "(expr (expr 4) < (expr 5)) >= (expr 6))";
+    std::string expected3 = "(expr (expr 7) >= (expr 8)) <= (expr 9))";
+    std::string expected4 = "(expr (expr 10) <= (expr 11)) > (expr 12))";
+    std::string expected5 = "(expr (expr 13) < (expr 14)) > (expr 15))";
+    std::string expected6 = "(expr (expr 16) >= (expr 17)) < (expr 18))";
+    std::string expected7 = "(expr (expr 19) <= (expr 20)) >= (expr 21))";
+    std::string expected8 = "(expr (expr 22) > (expr 23)) <= (expr 24))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos &&
+                tree.find(expected3) != std::string::npos &&
+                tree.find(expected4) != std::string::npos &&
+                tree.find(expected5) != std::string::npos &&
+                tree.find(expected6) != std::string::npos &&
+                tree.find(expected7) != std::string::npos &&
+                tree.find(expected8) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking additive / relational operator precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = 1 + 2 >= 3;
+        y = 4 < 5 - 6;
+    })";
+    std::string expected1 = "(expr (expr 1) + (expr 2)) >= (expr 3))";
+    std::string expected2 = "(expr (expr 4) < (expr (expr 5) - (expr 6)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking eq / ne operator associativity", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = 1 == 2 != 3;
+        y = 4 != 5 == 6;
+    })";
+    std::string expected1 = "(expr (expr 1) == (expr 2)) != (expr 3))";
+    std::string expected2 = "(expr (expr 4) != (expr 5)) == (expr 6))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: checking relational / equality operator precedence", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() {
+        var x, y;
+        x = 1 >= 2 != 3;
+        y = 4 == 5 < 6;
+    })";
+    std::string expected1 = "(expr (expr 1) >= (expr 2)) != (expr 3))";
+    std::string expected2 = "(expr (expr 4) == (expr (expr 5) < (expr 6)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    bool test = tree.find(expected1) != std::string::npos &&
+                tree.find(expected2) != std::string::npos;
+    REQUIRE(test);
+}
+
+TEST_CASE("SIP Lexer: add higher precedence than gt", "[SIP Lexer]") {
+    std::stringstream stream;
+    stream << R"(main() { return 1 > 2 + 3; })";
+    std::string expected = "(expr (expr 1) > (expr (expr 2) + (expr 3)))";
+    std::string tree = ParserHelper::parsetree(stream);
+    REQUIRE(tree.find(expected) != std::string::npos);
+}
+
 // these tests check new operators.
 TEST_CASE("SIP Lexer: new relational op, LE", "[SIP Lexer]") {
 std::stringstream stream;
