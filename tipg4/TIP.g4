@@ -48,7 +48,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
      | expr op=(EQ | NE) expr 			        #equalityExpr
      | expr (KAND) expr                         #andExpr
      | expr (KOR) expr                          #orExpr
-     | expr '?' expr ':' expr                   #ternaryExpr
+     | <assoc=right> expr '?' expr ':' expr     #ternaryExpr
      | LSB (expr (',' expr)*)? RSB              #arrExpr
      | LSB expr KOF expr RSB                    #arrOfExpr
      | expr LSB expr RSB                        #arrElemRefExpr
