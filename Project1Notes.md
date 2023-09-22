@@ -1,5 +1,5 @@
 
-[comment]:  (This file was for internal purposes to keep track of testing progress. It is being preserved for posterity reasons. Precedence tests were never added to this file but do exist for this part of the project (Add a pound sign after the colon to hide this in the output version)
+[c/omment]:  (This file was for internal purposes to keep track of testing progress. It is being preserved for posterity reasons. Precedence tests were never added to this file but do exist for this part of the project (Remove the / in comment to hide this in the output version)
 
 Features:
 
