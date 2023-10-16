@@ -1120,3 +1120,7 @@ llvm::Value *ASTReturnStmt::codegen() {
   Value *argVal = getArg()->codegen();
   return Builder.CreateRet(argVal);
 } // LCOV_EXCL_LINE
+
+llvm::Value* ASTBoolExpr::codegen() {
+		return nullptr;
+}

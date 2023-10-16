@@ -53,7 +53,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
      | LSB expr KOF expr RSB                    #arrOfExpr
      | expr LSB expr RSB                        #arrElemRefExpr
      | LEN expr                                 #lenExpr
-     | (KTRUE | KFALSE)                         #booleanExpr
+     | (KTRUE | KFALSE)                         #boolExpr
      | IDENTIFIER				                #varExpr
      | NUMBER					                #numExpr
      | KINPUT					                #inputExpr

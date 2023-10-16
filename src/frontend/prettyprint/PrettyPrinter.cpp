@@ -246,6 +246,13 @@ void PrettyPrinter::endVisit(ASTReturnStmt *element) {
   visitResults.push_back(indent() + "return " + argString + ";");
 }
 
+
+void PrettyPrinter::endVisit(ASTBoolExpr *element) {
+		visitResults.push_back(element->getValue());
+}
+
+
+
 std::string PrettyPrinter::indent() const {
   return std::string(indentLevel * indentSize, indentChar);
 }
