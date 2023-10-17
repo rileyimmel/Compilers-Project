@@ -198,12 +198,12 @@ Any ASTBuilder::visitAdditiveExpr(TIPParser::AdditiveExprContext *ctx) {
 } // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitAndExpr(TIPParser::AndExprContext *ctx) {
-    visitBinaryExpr(ctx, ctx->getText());
+    visitBinaryExpr(ctx, "and");
     return "";
 } // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitOrExpr(TIPParser::OrExprContext *ctx) {
-    visitBinaryExpr(ctx, ctx->getText());
+    visitBinaryExpr(ctx, "or");
     return "";
 } // LCOV_EXCL_LINE
 
