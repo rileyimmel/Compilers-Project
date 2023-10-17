@@ -56,6 +56,7 @@ public:
   virtual void endVisit(ASTErrorStmt *element) override;
 
 	virtual void endVisit(ASTBoolExpr *element) override;
+	virtual void endVisit(ASTTernaryExpr *element) override;
 
 private:
   std::string indent() const;

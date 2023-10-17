@@ -53,7 +53,7 @@ expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
      | LSB expr KOF expr RSB                    #arrOfExpr
      | expr LSB expr RSB                        #arrElemRefExpr
      | LEN expr                                 #lenExpr
-     | (KTRUE | KFALSE)                         #boolExpr
+     | BOOLEAN                                  #boolExpr
      | IDENTIFIER				                #varExpr
      | NUMBER					                #numExpr
      | KINPUT					                #inputExpr
@@ -146,6 +146,8 @@ KTRUE : 'true' ;
 KFALSE : 'false' ;
 KBY : 'by' ;
 KOF : 'of' ;
+
+BOOLEAN : 'true' | 'false' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;

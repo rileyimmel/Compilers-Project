@@ -251,6 +251,21 @@ void PrettyPrinter::endVisit(ASTBoolExpr *element) {
 		visitResults.push_back(element->getValue());
 }
 
+void PrettyPrinter::endVisit(ASTTernaryExpr *element) {
+		std::string falseString = visitResults.back();
+		visitResults.pop_back();
+
+		std::string trueString = visitResults.back();
+		visitResults.pop_back();
+
+		std::string condString = visitResults.back();
+		visitResults.pop_back();
+
+		std::string ternaryString = indent() + condString + " ? " + trueString + " : " + falseString + ";";
+
+		visitResults.push_back(ternaryString);
+}
+
 
 
 std::string PrettyPrinter::indent() const {
