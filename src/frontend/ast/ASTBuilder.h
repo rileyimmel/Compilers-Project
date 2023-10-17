@@ -71,4 +71,5 @@ public:
   Any visitReturnStmt(TIPParser::ReturnStmtContext *ctx) override;
 
 	Any visitBoolExpr(TIPParser::BoolExprContext *ctx) override;
+	Any visitTernaryExpr(TIPParser::TernaryExprContext *ctx) override;
 };

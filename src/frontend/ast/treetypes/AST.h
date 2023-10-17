@@ -36,3 +36,4 @@
 #include "ASTWhileStmt.h"
 
 #include "ASTBoolExpr.h"
+#include "ASTTernaryExpr.h"

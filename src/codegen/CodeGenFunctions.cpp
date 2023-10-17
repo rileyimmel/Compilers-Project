@@ -1124,3 +1124,7 @@ llvm::Value *ASTReturnStmt::codegen() {
 llvm::Value* ASTBoolExpr::codegen() {
 		return nullptr;
 }
+
+llvm::Value* ASTTernaryExpr::codegen() {
+		return nullptr;
+}

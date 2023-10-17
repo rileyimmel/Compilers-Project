@@ -71,4 +71,6 @@ public:
 
   virtual bool visit(ASTBoolExpr *element) { return true; }
   virtual void endVisit(ASTBoolExpr *element) {}
+	virtual bool visit(ASTTernaryExpr *element) { return true; }
+	virtual void endVisit(ASTTernaryExpr *element) {}
 };

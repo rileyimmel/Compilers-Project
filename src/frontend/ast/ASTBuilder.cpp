@@ -517,13 +517,31 @@ Any ASTBuilder::visitAssignStmt(TIPParser::AssignStmtContext *ctx) {
 }
 
 Any ASTBuilder::visitBoolExpr(TIPParser::BoolExprContext *ctx) {
-		std::string val = ctx->getText();
+		std::string val = ctx->BOOLEAN()->getText();
 		visitedExpr = std::make_shared<ASTBoolExpr>(val);
 
 		LOG_S(1) << "Built AST node " << *visitedExpr;
 
 		// Set source location
 		visitedExpr->setLocation(ctx->getStart()->getLine(),
+														 ctx->getStart()->getCharPositionInLine());
+		return "";
+}
+
+Any ASTBuilder::visitTernaryExpr(TIPParser::TernaryExprContext *ctx) {
+		visit(ctx->expr(0));
+		auto cond = visitedExpr;
+		visit(ctx->expr(1));
+		auto trueResult = visitedExpr;
+		visit(ctx->expr(2));
+		auto falseResult = visitedExpr;
+
+		visitedExpr = std::make_shared<ASTTernaryExpr>(cond, trueResult, falseResult);
+
+		LOG_S(1) << "Built AST node " << *visitedStmt;
+
+		// Set source location
+		visitedStmt->setLocation(ctx->getStart()->getLine(),
 														 ctx->getStart()->getCharPositionInLine());
 		return "";
 }
