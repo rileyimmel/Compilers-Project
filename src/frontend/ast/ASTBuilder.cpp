@@ -31,12 +31,12 @@ std::string ASTBuilder::opString(int op) {
   case TIPParser::GE:
     opStr = ">=";
     break;
-	case TIPParser::LT:
-		opStr = "<";
-		break;
-	case TIPParser::LE:
-		opStr = "<=";
-		break;
+  case TIPParser::LT:
+    opStr = "<";
+    break;
+  case TIPParser::LE:
+    opStr = "<=";
+    break;
   case TIPParser::EQ:
     opStr = "==";
     break;
@@ -46,6 +46,7 @@ std::string ASTBuilder::opString(int op) {
   case TIPParser::MOD:
       opStr = "%";
       break;
+
   default:
     throw std::runtime_error(
         "unknown operator :" +
@@ -194,6 +195,16 @@ void ASTBuilder::visitBinaryExpr(T *ctx, const std::string &op) {
 Any ASTBuilder::visitAdditiveExpr(TIPParser::AdditiveExprContext *ctx) {
   visitBinaryExpr(ctx, opString(ctx->op->getType()));
   return "";
+} // LCOV_EXCL_LINE
+
+Any ASTBuilder::visitAndExpr(TIPParser::AndExprContext *ctx) {
+    visitBinaryExpr(ctx, ctx->getText());
+    return "";
+} // LCOV_EXCL_LINE
+
+Any ASTBuilder::visitOrExpr(TIPParser::OrExprContext *ctx) {
+    visitBinaryExpr(ctx, ctx->getText());
+    return "";
 } // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitRelationalExpr(TIPParser::RelationalExprContext *ctx) {
