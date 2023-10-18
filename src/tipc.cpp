@@ -26,6 +26,8 @@ static cl::opt<bool> polyinf("pi",
                              cl::cat(TIPcat));
 static cl::opt<bool> disopt("do", cl::desc("disable bitcode optimization"),
                             cl::cat(TIPcat));
+static cl::opt<bool> nocodegen("ng", cl::desc("disable code generation"),
+														cl::cat(TIPcat));
 static cl::opt<int> debug(
     "verbose",
     cl::desc("enable log messages (Levels 1-3) \n Level 1 - Basic logging for "
@@ -123,18 +125,19 @@ int main(int argc, char *argv[]) {
         analysisResults->getCallGraph()->print(cgStream);
       }
 
-      auto llvmModule =
-          CodeGenerator::generate(ast.get(), analysisResults.get(), sourceFile);
+			if(!nocodegen) {
+					auto llvmModule =
+									CodeGenerator::generate(ast.get(), analysisResults.get(), sourceFile);
 
-      if (!disopt) {
-        Optimizer::optimize(llvmModule.get());
-      }
-
-      if (emitHrAsm) {
-        CodeGenerator::emitHumanReadableAssembly(llvmModule.get(), outputfile);
-      } else {
-        CodeGenerator::emit(llvmModule.get(), outputfile);
-      }
+					if (!disopt) {
+							Optimizer::optimize(llvmModule.get());
+					}
+					if (emitHrAsm) {
+							CodeGenerator::emitHumanReadableAssembly(llvmModule.get(), outputfile);
+					} else {
+							CodeGenerator::emit(llvmModule.get(), outputfile);
+					}
+			}
 
       bool printAST = !astFile.getValue().empty();
       if (printAST) {
