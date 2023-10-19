@@ -38,6 +38,10 @@ public:
    * a helper function to build binary expressions
    */
   template <typename T> void visitBinaryExpr(T *ctx, const std::string &op);
+  /*
+   * SIP helper function for unary expressions
+   */
+  template <typename T> void visitUnaryExpr(const std::string &op, T *ctx);
 
   Any visitFunction(TIPParser::FunctionContext *ctx) override;
   Any visitNegNumber(TIPParser::NegNumberContext *ctx) override;
@@ -70,6 +74,7 @@ public:
   Any visitErrorStmt(TIPParser::ErrorStmtContext *ctx) override;
   Any visitReturnStmt(TIPParser::ReturnStmtContext *ctx) override;
 
+  // SIP
 	Any visitBoolExpr(TIPParser::BoolExprContext *ctx) override;
 	Any visitTernaryExpr(TIPParser::TernaryExprContext *ctx) override;
   Any visitForRangeStmt(TIPParser::ForRangeStmtContext *ctx) override;
@@ -77,4 +82,5 @@ public:
   Any visitArrExpr(TIPParser::ArrExprContext *ctx) override;
   Any visitArrOfExpr(TIPParser::ArrOfExprContext *ctx) override;
   Any visitArrElemRefExpr(TIPParser::ArrElemRefExprContext *ctx) override;
+  Any visitLenExpr(TIPParser::LenExprContext *ctx) override;
 };

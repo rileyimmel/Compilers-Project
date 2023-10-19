@@ -281,7 +281,7 @@ TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
 }
 
 TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
-    // make an ASTArrExpr node
+    // make an ASTArrOfExpr node
     auto left = std::make_shared<ASTVariableExpr>("x");
     auto right = std::make_shared<ASTVariableExpr>("y");
     auto arrOfNode = std::make_shared<ASTArrOfExpr>(left, right);
@@ -317,7 +317,7 @@ TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
 }
 
 TEST_CASE("ASTSipNodeTest: array elem ref node", "[ASTSipNode]") {
-    // make an ASTArrExpr node
+    // make an ASTArrElemRefExpr node
     auto ptr = std::make_shared<ASTVariableExpr>("x");
     auto index = std::make_shared<ASTNumberExpr>(0);
     auto arrElemRefNode = std::make_shared<ASTArrElemRefExpr>(ptr, index);
@@ -350,4 +350,34 @@ TEST_CASE("ASTSipNodeTest: array elem ref node", "[ASTSipNode]") {
     std::stringstream printArrElemRefNode;
     printArrElemRefNode << *arrElemRefNode;
     REQUIRE(printArrElemRefNode.str() == "x[0]");
+}
+
+TEST_CASE("ASTSipNodeTest: len op node", "[ASTSipNode]") {
+    // make an ASTUnaryExpr node
+    std::string op = "#";
+    auto right = std::make_shared<ASTVariableExpr>("x");
+    auto lenNode = std::make_shared<ASTUnaryExpr>(op, right);
+
+    // test the getter
+    REQUIRE(lenNode->getOp() == op);
+    REQUIRE(lenNode->getRight() == right.get());
+
+
+    // make sure it has 1 child
+    REQUIRE(lenNode->getChildren().size() == 1);
+    REQUIRE(lenNode->getChildren().back().get() == right.get());
+
+
+    // test the accept method
+    EndVisitResults lenVisitor;
+    lenNode->accept(&lenVisitor);
+    std::string expected[] = {"x"};
+    for (int i=0; i < 1; i++) {
+        REQUIRE(lenVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printLenNode;
+    printLenNode << *lenNode;
+    REQUIRE(printLenNode.str() == "#[x]");
 }

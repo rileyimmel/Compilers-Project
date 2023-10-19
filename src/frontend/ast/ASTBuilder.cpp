@@ -46,7 +46,6 @@ std::string ASTBuilder::opString(int op) {
   case TIPParser::MOD:
       opStr = "%";
       break;
-
   default:
     throw std::runtime_error(
         "unknown operator :" +
@@ -644,6 +643,25 @@ Any ASTBuilder::visitArrElemRefExpr(TIPParser::ArrElemRefExprContext *ctx) {
     // Set source location
     visitedExpr->setLocation(ctx->getStart()->getLine(),
                              ctx->getStart()->getCharPositionInLine());
+    return "";
+} // LCOV_EXCL_LINE
+
+template <typename T>
+void ASTBuilder::visitUnaryExpr(const std::string &op, T *ctx) {
+    visit(ctx->expr());
+    auto right = visitedExpr;
+
+    visitedExpr = std::make_shared<ASTUnaryExpr>(op, right);
+
+    LOG_S(1) << "Built AST node " << *visitedExpr;
+
+    // Set source location
+    visitedExpr->setLocation(ctx->getStart()->getLine(),
+                             ctx->getStart()->getCharPositionInLine());
+}
+
+Any ASTBuilder::visitLenExpr(TIPParser::LenExprContext *ctx) {
+    visitUnaryExpr(ctx->LEN()->getText(), ctx);
     return "";
 } // LCOV_EXCL_LINE
 

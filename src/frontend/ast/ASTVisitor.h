@@ -69,6 +69,7 @@ public:
   virtual bool visit(ASTBlockStmt *element) { return true; }
   virtual void endVisit(ASTBlockStmt *element) {}
 
+  // SIP
   virtual bool visit(ASTBoolExpr *element) { return true; }
   virtual void endVisit(ASTBoolExpr *element) {}
 	virtual bool visit(ASTTernaryExpr *element) { return true; }
@@ -83,4 +84,6 @@ public:
   virtual void endVisit(ASTArrOfExpr *element) {}
   virtual bool visit(ASTArrElemRefExpr *element) { return true; }
   virtual void endVisit(ASTArrElemRefExpr *element) {}
+  virtual bool visit(ASTUnaryExpr *element) { return true; }
+  virtual void endVisit(ASTUnaryExpr *element) {}
 };
