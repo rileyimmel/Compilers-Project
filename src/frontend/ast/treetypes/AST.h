@@ -41,3 +41,4 @@
 #include "ASTForEachStmt.h"
 #include "ASTArrExpr.h"
 #include "ASTArrOfExpr.h"
+#include "ASTArrElemRefExpr.h"

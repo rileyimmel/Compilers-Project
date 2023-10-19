@@ -338,6 +338,16 @@ void PrettyPrinter::endVisit(ASTArrOfExpr *element) {
     visitResults.push_back(arrOfString);
 }
 
+void PrettyPrinter::endVisit(ASTArrElemRefExpr *element) {
+    std::string indexString = visitResults.back();
+    visitResults.pop_back();
+    std::string ptrString = visitResults.back();
+    visitResults.pop_back();
+
+    std::string elemRefString = ptrString + "[" + indexString + "]";
+    visitResults.push_back(elemRefString);
+}
+
 std::string PrettyPrinter::indent() const {
   return std::string(indentLevel * indentSize, indentChar);
 }

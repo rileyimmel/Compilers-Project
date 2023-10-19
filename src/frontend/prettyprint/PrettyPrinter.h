@@ -63,6 +63,7 @@ public:
   virtual void endVisit(ASTForEachStmt *element) override;
   virtual void endVisit(ASTArrExpr *element) override;
   virtual void endVisit(ASTArrOfExpr *element) override;
+  virtual void endVisit(ASTArrElemRefExpr *element) override;
 
 private:
   std::string indent() const;

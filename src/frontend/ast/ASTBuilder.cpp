@@ -630,7 +630,22 @@ Any ASTBuilder::visitArrOfExpr(TIPParser::ArrOfExprContext *ctx) {
     return "";
 } // LCOV_EXCL_LINE
 
+Any ASTBuilder::visitArrElemRefExpr(TIPParser::ArrElemRefExprContext *ctx) {
+    visit(ctx->expr(0));
+    auto ptr = visitedExpr;
 
+    visit(ctx->expr(1));
+    auto index = visitedExpr;
+
+    visitedExpr = std::make_shared<ASTArrElemRefExpr>(ptr, index);
+
+    LOG_S(1) << "Built AST node " << *visitedExpr;
+
+    // Set source location
+    visitedExpr->setLocation(ctx->getStart()->getLine(),
+                             ctx->getStart()->getCharPositionInLine());
+    return "";
+} // LCOV_EXCL_LINE
 
 std::string ASTBuilder::generateSHA256(std::string tohash) {
   std::vector<unsigned char> hash(picosha2::k_digest_size);

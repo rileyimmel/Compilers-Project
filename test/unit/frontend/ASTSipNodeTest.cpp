@@ -16,8 +16,8 @@ public:
 
     void endVisit(ASTVariableExpr * element) override { captureResults(element); }
     void endVisit(ASTBinaryExpr * element) override { captureResults(element); }
-    void endVisit(ASTNumberExpr * element) { captureResults(element); }
-    void endVisit(ASTOutputStmt * element) { captureResults(element); }
+    void endVisit(ASTNumberExpr * element) override { captureResults(element); }
+    void endVisit(ASTOutputStmt * element) override { captureResults(element); }
 
 };
 
@@ -314,4 +314,40 @@ TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
     std::stringstream printArrOfNode;
     printArrOfNode << *arrOfNode;
     REQUIRE(printArrOfNode.str() == "[x of y]");
+}
+
+TEST_CASE("ASTSipNodeTest: array elem ref node", "[ASTSipNode]") {
+    // make an ASTArrExpr node
+    auto ptr = std::make_shared<ASTVariableExpr>("x");
+    auto index = std::make_shared<ASTNumberExpr>(0);
+    auto arrElemRefNode = std::make_shared<ASTArrElemRefExpr>(ptr, index);
+
+    // test the getter
+    REQUIRE(arrElemRefNode->getPtr() == ptr.get());
+    REQUIRE(arrElemRefNode->getIndex() == index.get());
+
+    // make sure it has 2 children
+    REQUIRE(arrElemRefNode->getChildren().size() == 2);
+    bool ptrFound, indexFound;
+    for(auto &child : arrElemRefNode->getChildren()){
+        if(child.get() == ptr.get()){
+            ptrFound = true;
+        } else if(child.get() == index.get()){
+            indexFound = true;
+        }
+    }
+    REQUIRE((ptrFound && indexFound));
+
+    // test the accept method
+    EndVisitResults arrElemRefVisitor;
+    arrElemRefNode->accept(&arrElemRefVisitor);
+    std::string expected[] = {"x","0"};
+    for (int i=0; i < 2; i++) {
+        REQUIRE(arrElemRefVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printArrElemRefNode;
+    printArrElemRefNode << *arrElemRefNode;
+    REQUIRE(printArrElemRefNode.str() == "x[0]");
 }

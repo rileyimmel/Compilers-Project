@@ -81,4 +81,6 @@ public:
   virtual void endVisit(ASTArrExpr *element) {}
   virtual bool visit(ASTArrOfExpr *element) { return true; }
   virtual void endVisit(ASTArrOfExpr *element) {}
+  virtual bool visit(ASTArrElemRefExpr *element) { return true; }
+  virtual void endVisit(ASTArrElemRefExpr *element) {}
 };
