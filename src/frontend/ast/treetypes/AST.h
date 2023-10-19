@@ -37,3 +37,4 @@
 
 #include "ASTBoolExpr.h"
 #include "ASTTernaryExpr.h"
+#include "ASTForRangeStmt.h"

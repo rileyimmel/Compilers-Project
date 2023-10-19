@@ -546,6 +546,36 @@ Any ASTBuilder::visitTernaryExpr(TIPParser::TernaryExprContext *ctx) {
 		return "";
 }
 
+Any ASTBuilder::visitForRangeStmt(TIPParser::ForRangeStmtContext *ctx) {
+    visit(ctx->expr(0));
+    auto iter = visitedExpr;
+
+    visit(ctx->expr(1));
+    auto rStart = visitedExpr;
+
+    visit(ctx->expr(2));
+    auto rEnd = visitedExpr;
+
+    visit(ctx->statement());
+        auto body = visitedStmt;
+
+    std::shared_ptr<ASTExpr> step = nullptr;
+
+    if(ctx->expr().size() == 4) {
+        visit(ctx->expr(3));
+        step = std::move(visitedExpr);
+    }
+
+    visitedStmt = std::make_shared<ASTForRangeStmt>(iter, rStart, rEnd, step, body);
+
+    LOG_S(1) << "Built AST node " << *visitedStmt;
+
+    // Set source location
+    visitedStmt->setLocation(ctx->getStart()->getLine(),
+                             ctx->getStart()->getCharPositionInLine());
+    return "";
+}
+
 
 std::string ASTBuilder::generateSHA256(std::string tohash) {
   std::vector<unsigned char> hash(picosha2::k_digest_size);

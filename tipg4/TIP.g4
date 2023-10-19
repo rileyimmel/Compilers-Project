@@ -149,7 +149,7 @@ KOF : 'of' ;
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;
 
-//BOOLEAN : 'true' | 'false' ;
+BOOLEAN : 'true' | 'false' ;
 
 IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_]* ;
 

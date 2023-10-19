@@ -16,6 +16,9 @@ public:
 
     void endVisit(ASTVariableExpr * element) override { captureResults(element); }
     void endVisit(ASTBinaryExpr * element) override { captureResults(element); }
+    void endVisit(ASTNumberExpr * element) { captureResults(element); }
+    void endVisit(ASTOutputStmt * element) { captureResults(element); }
+
 };
 
 TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
@@ -56,7 +59,7 @@ TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
 }
 
 TEST_CASE("ASTSipNodeTest: ternary node", "[ASTSipNode]") {
-    // make an ASTTernaryNode
+    // make an ASTTernaryExpr node
     auto x = std::make_shared<ASTVariableExpr>("x");
     auto y = std::make_shared<ASTVariableExpr>("y");
     std::string op = ">";
@@ -102,4 +105,119 @@ TEST_CASE("ASTSipNodeTest: ternary node", "[ASTSipNode]") {
     std::stringstream printTernNode;
     printTernNode << *ternNode;
     REQUIRE(printTernNode.str() == "(x>y) ? 1 : 0");
+}
+
+TEST_CASE("ASTSipNodeTest: for range with step node", "[ASTSipNode]") {
+    // make an ASTForRangeStmt node
+    auto iter = std::make_shared<ASTVariableExpr>("i");
+    auto start = std::make_shared<ASTNumberExpr>(0);
+    auto end = std::make_shared<ASTNumberExpr>(10);
+    auto step = std::make_shared<ASTNumberExpr>(2);
+    auto body = std::make_shared<ASTOutputStmt>(std::make_shared<ASTVariableExpr>("bodyContents"));
+
+    auto forRangeNode = std::make_shared<ASTForRangeStmt>(iter, start, end, step, body);
+
+    // test the getters
+    auto iterVal = iter.get();
+    REQUIRE(forRangeNode->getIter() == iterVal);
+
+    auto startVal = start.get();
+    REQUIRE(forRangeNode->getRStart() == startVal);
+
+    auto endVal = end.get();
+    REQUIRE(forRangeNode->getREnd() == endVal);
+
+    auto stepVal = step.get();
+    REQUIRE(forRangeNode->getStep() == stepVal);
+
+    auto bodyVal = body.get();
+    REQUIRE(forRangeNode->getBody() == bodyVal);
+
+    // make sure it has 5 children
+    REQUIRE(forRangeNode->getChildren().size() == 5);
+    bool iterFound, startFound, endFound, stepFound, bodyFound;
+    for(auto &child : forRangeNode->getChildren()){
+        auto childVal = child.get();
+        if(childVal == iterVal){
+            iterFound = true;
+        } else if(childVal == startVal){
+            startFound = true;
+        } else if(childVal == endVal){
+            endFound = true;
+        } else if(childVal == stepVal){
+            stepFound = true;
+        } else if(childVal == bodyVal){
+            bodyFound = true;
+        }
+    }
+    REQUIRE((iterFound && startFound && endFound && stepFound && bodyFound));
+
+    // test the accept method
+    EndVisitResults forRangeVisitor;
+    forRangeNode->accept(&forRangeVisitor);
+    std::string expected[] = {"i","0","10","2","bodyContents","output bodyContents;"};
+    for (int i=0; i < 6; i++) {
+        REQUIRE(forRangeVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printForRangeNode;
+    printForRangeNode << *forRangeNode;
+    REQUIRE(printForRangeNode.str() == "for (i : 0 .. 10 by 2) output bodyContents;");
+}
+
+TEST_CASE("ASTSipNodeTest: for range without step node", "[ASTSipNode]") {
+    // make an ASTForRangeStmt node
+    auto iter = std::make_shared<ASTVariableExpr>("i");
+    auto start = std::make_shared<ASTNumberExpr>(0);
+    auto end = std::make_shared<ASTNumberExpr>(10);
+    auto step = nullptr;
+    auto body = std::make_shared<ASTOutputStmt>(std::make_shared<ASTVariableExpr>("bodyContents"));
+
+    auto forRangeNode = std::make_shared<ASTForRangeStmt>(iter, start, end, step, body);
+
+    // test the getters
+    auto iterVal = iter.get();
+    REQUIRE(forRangeNode->getIter() == iterVal);
+
+    auto startVal = start.get();
+    REQUIRE(forRangeNode->getRStart() == startVal);
+
+    auto endVal = end.get();
+    REQUIRE(forRangeNode->getREnd() == endVal);
+
+    REQUIRE(forRangeNode->getStep() == nullptr);
+
+    auto bodyVal = body.get();
+    REQUIRE(forRangeNode->getBody() == bodyVal);
+
+    // make sure it has 4 children
+    REQUIRE(forRangeNode->getChildren().size() == 4);
+    bool iterFound, startFound, endFound, bodyFound;
+    for(auto &child : forRangeNode->getChildren()){
+        auto childVal = child.get();
+        if(childVal == iterVal){
+            iterFound = true;
+        } else if(childVal == startVal){
+            startFound = true;
+        } else if(childVal == endVal){
+            endFound = true;
+        } else if(childVal == bodyVal){
+            bodyFound = true;
+        }
+    }
+    REQUIRE((iterFound && startFound && endFound && bodyFound));
+
+    // test the accept method
+    EndVisitResults forRangeVisitor;
+    forRangeNode->accept(&forRangeVisitor);
+    std::string expected[] = {"i","0","10","bodyContents","output bodyContents;"};
+    for (int i=0; i < 5; i++) {
+        REQUIRE(forRangeVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printForRangeNode;
+    printForRangeNode << *forRangeNode;
+    REQUIRE(printForRangeNode.str() == "for (i : 0 .. 10) output bodyContents;");
 }

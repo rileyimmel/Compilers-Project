@@ -1,4 +1,6 @@
-add_library(ast)
+add_library(ast
+        treetypes/ASTForRangeStmt.h
+        treetypes/ASTForRangeStmt.cpp)
 target_sources(
   ast
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ASTBuilder.cpp
