@@ -514,7 +514,7 @@ Any ASTBuilder::visitAssignStmt(TIPParser::AssignStmtContext *ctx) {
   visitedStmt->setLocation(ctx->getStart()->getLine(),
                            ctx->getStart()->getCharPositionInLine());
   return "";
-}
+} // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitBoolExpr(TIPParser::BoolExprContext *ctx) {
 		std::string val = ctx->BOOLEAN()->getText();
@@ -526,7 +526,7 @@ Any ASTBuilder::visitBoolExpr(TIPParser::BoolExprContext *ctx) {
 		visitedExpr->setLocation(ctx->getStart()->getLine(),
 														 ctx->getStart()->getCharPositionInLine());
 		return "";
-}
+} // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitTernaryExpr(TIPParser::TernaryExprContext *ctx) {
 		visit(ctx->expr(0));
@@ -544,7 +544,7 @@ Any ASTBuilder::visitTernaryExpr(TIPParser::TernaryExprContext *ctx) {
 		visitedExpr->setLocation(ctx->getStart()->getLine(),
 														 ctx->getStart()->getCharPositionInLine());
 		return "";
-}
+} // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitForRangeStmt(TIPParser::ForRangeStmtContext *ctx) {
     visit(ctx->expr(0));
@@ -574,7 +574,7 @@ Any ASTBuilder::visitForRangeStmt(TIPParser::ForRangeStmtContext *ctx) {
     visitedStmt->setLocation(ctx->getStart()->getLine(),
                              ctx->getStart()->getCharPositionInLine());
     return "";
-}
+} // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitForEachStmt(TIPParser::ForEachStmtContext *ctx) {
     visit(ctx->expr(0));
@@ -594,7 +594,7 @@ Any ASTBuilder::visitForEachStmt(TIPParser::ForEachStmtContext *ctx) {
     visitedStmt->setLocation(ctx->getStart()->getLine(),
                              ctx->getStart()->getCharPositionInLine());
     return "";
-}
+} // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitArrExpr(TIPParser::ArrExprContext *ctx) {
     std::vector<std::shared_ptr<ASTExpr>> elements;
@@ -611,7 +611,7 @@ Any ASTBuilder::visitArrExpr(TIPParser::ArrExprContext *ctx) {
     visitedExpr->setLocation(ctx->getStart()->getLine(),
                              ctx->getStart()->getCharPositionInLine());
     return "";
-}
+} // LCOV_EXCL_LINE
 
 Any ASTBuilder::visitArrOfExpr(TIPParser::ArrOfExprContext *ctx) {
     visit(ctx->expr(0));
@@ -628,7 +628,7 @@ Any ASTBuilder::visitArrOfExpr(TIPParser::ArrOfExprContext *ctx) {
     visitedExpr->setLocation(ctx->getStart()->getLine(),
                              ctx->getStart()->getCharPositionInLine());
     return "";
-}
+} // LCOV_EXCL_LINE
 
 
 
