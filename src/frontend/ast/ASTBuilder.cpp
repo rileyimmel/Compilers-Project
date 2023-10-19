@@ -596,6 +596,23 @@ Any ASTBuilder::visitForEachStmt(TIPParser::ForEachStmtContext *ctx) {
     return "";
 }
 
+Any ASTBuilder::visitArrExpr(TIPParser::ArrExprContext *ctx) {
+    std::vector<std::shared_ptr<ASTExpr>> elements;
+    for (auto element : ctx->expr()) {
+        visit(element);
+        elements.push_back(visitedExpr);
+    }
+
+    visitedExpr = std::make_shared<ASTArrExpr>(elements);
+
+    LOG_S(1) << "Built AST node " << *visitedExpr;
+
+    // Set source location
+    visitedExpr->setLocation(ctx->getStart()->getLine(),
+                             ctx->getStart()->getCharPositionInLine());
+    return "";
+}
+
 
 std::string ASTBuilder::generateSHA256(std::string tohash) {
   std::vector<unsigned char> hash(picosha2::k_digest_size);

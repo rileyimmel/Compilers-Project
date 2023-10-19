@@ -74,4 +74,5 @@ public:
 	Any visitTernaryExpr(TIPParser::TernaryExprContext *ctx) override;
   Any visitForRangeStmt(TIPParser::ForRangeStmtContext *ctx) override;
   Any visitForEachStmt(TIPParser::ForEachStmtContext *ctx) override;
+  Any visitArrExpr(TIPParser::ArrExprContext *ctx) override;
 };

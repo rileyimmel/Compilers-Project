@@ -268,3 +268,51 @@ TEST_CASE("ASTSipNodeTest: for each node", "[ASTSipNode]") {
     printForEachNode << *forEachNode;
     REQUIRE(printForEachNode.str() == "for (x : y) output bodyContents;");
 }
+
+TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
+    // make an ASTArrExpr node
+    auto zero = std::make_shared<ASTVariableExpr>("x");
+    auto one = std::make_shared<ASTVariableExpr>("y");
+    auto two = std::make_shared<ASTVariableExpr>("z");
+    std::vector<std::shared_ptr<ASTExpr>> items{zero, one, two};
+
+    std::vector<ASTExpr*> vals{zero.get(), one.get(), two.get()};
+
+    auto arrNode = std::make_shared<ASTArrExpr>(items);
+
+    // test the getter
+    auto elements = arrNode->getElements();
+    std::vector<std::shared_ptr<ASTExpr>> compare;
+    REQUIRE(elements == vals);
+    for(int i = 0; i < elements.size(); i++){
+        REQUIRE(elements[i] == vals[i]);
+    }
+
+    // make sure it has 3 children
+    REQUIRE(arrNode->getChildren().size() == 3);
+    bool zeroFound, oneFound, twoFound;
+    for(auto &child : arrNode->getChildren()){
+        auto childVal = child.get();
+        if(childVal == vals[0]){
+            zeroFound = true;
+        } else if(childVal == vals[1]){
+            oneFound = true;
+        } else if(childVal == vals[2]){
+            twoFound = true;
+        }
+    }
+    REQUIRE((zeroFound && oneFound && twoFound));
+
+    // test the accept method
+    EndVisitResults arrVisitor;
+    arrNode->accept(&arrVisitor);
+    std::string expected[] = {"x","y","z"};
+    for (int i=0; i < 3; i++) {
+        REQUIRE(arrVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printArrNode;
+    printArrNode << *arrNode;
+    REQUIRE(printArrNode.str() == "[x,y,z]");
+}

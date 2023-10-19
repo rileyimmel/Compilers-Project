@@ -77,4 +77,6 @@ public:
   virtual void endVisit(ASTForRangeStmt *element) {}
   virtual bool visit(ASTForEachStmt *element) { return true; }
   virtual void endVisit(ASTForEachStmt *element) {}
+  virtual bool visit(ASTArrExpr *element) { return true; }
+  virtual void endVisit(ASTArrExpr *element) {}
 };

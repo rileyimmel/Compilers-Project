@@ -1136,3 +1136,7 @@ llvm::Value *ASTForRangeStmt::codegen() {
 llvm::Value *ASTForEachStmt::codegen() {
     return nullptr;
 }
+
+llvm::Value *ASTArrExpr::codegen() {
+    return nullptr;
+}

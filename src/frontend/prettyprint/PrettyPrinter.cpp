@@ -321,6 +321,12 @@ void PrettyPrinter::endVisit(ASTForEachStmt *element) {
     visitResults.push_back(forEachString);
 }
 
+void PrettyPrinter::endVisit(ASTArrExpr *element) {
+    visitResults.push_back(
+            "[" + joinWithDelim(visitResults, ", ", element->getElements().size(), 1) +
+            "]");
+}
+
 std::string PrettyPrinter::indent() const {
   return std::string(indentLevel * indentSize, indentChar);
 }
