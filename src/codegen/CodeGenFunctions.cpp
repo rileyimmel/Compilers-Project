@@ -1121,14 +1121,18 @@ llvm::Value *ASTReturnStmt::codegen() {
   return Builder.CreateRet(argVal);
 } // LCOV_EXCL_LINE
 
-llvm::Value* ASTBoolExpr::codegen() {
+llvm::Value *ASTBoolExpr::codegen() {
 		return nullptr;
 }
 
-llvm::Value* ASTTernaryExpr::codegen() {
+llvm::Value *ASTTernaryExpr::codegen() {
 		return nullptr;
 }
 
-llvm::Value* ASTForRangeStmt::codegen() {
+llvm::Value *ASTForRangeStmt::codegen() {
+    return nullptr;
+}
+
+llvm::Value *ASTForEachStmt::codegen() {
     return nullptr;
 }

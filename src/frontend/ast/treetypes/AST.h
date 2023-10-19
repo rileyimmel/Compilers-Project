@@ -38,3 +38,4 @@
 #include "ASTBoolExpr.h"
 #include "ASTTernaryExpr.h"
 #include "ASTForRangeStmt.h"
+#include "ASTForEachStmt.h"

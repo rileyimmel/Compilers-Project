@@ -75,4 +75,6 @@ public:
 	virtual void endVisit(ASTTernaryExpr *element) {}
   virtual bool visit(ASTForRangeStmt *element) { return true; }
   virtual void endVisit(ASTForRangeStmt *element) {}
+  virtual bool visit(ASTForEachStmt *element) { return true; }
+  virtual void endVisit(ASTForEachStmt *element) {}
 };

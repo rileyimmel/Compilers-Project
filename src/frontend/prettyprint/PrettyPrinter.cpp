@@ -299,7 +299,27 @@ void PrettyPrinter::endVisit(ASTForRangeStmt *element) {
     visitResults.push_back(forRangeString);
 }
 
+bool PrettyPrinter::visit(ASTForEachStmt *element) {
+    indentLevel++;
+    return true;
+}
 
+void PrettyPrinter::endVisit(ASTForEachStmt *element) {
+    std::string bodyString = visitResults.back();
+    visitResults.pop_back();
+
+    std::string listString = visitResults.back();
+    visitResults.pop_back();
+
+    std::string itemString = visitResults.back();
+    visitResults.pop_back();
+
+    indentLevel--;
+
+    std::string forEachString = indent() + "for (" + itemString + " : " + listString + ") \n" + bodyString;
+
+    visitResults.push_back(forEachString);
+}
 
 std::string PrettyPrinter::indent() const {
   return std::string(indentLevel * indentSize, indentChar);

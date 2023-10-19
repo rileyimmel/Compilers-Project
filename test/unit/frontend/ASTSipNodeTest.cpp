@@ -221,3 +221,50 @@ TEST_CASE("ASTSipNodeTest: for range without step node", "[ASTSipNode]") {
     printForRangeNode << *forRangeNode;
     REQUIRE(printForRangeNode.str() == "for (i : 0 .. 10) output bodyContents;");
 }
+
+TEST_CASE("ASTSipNodeTest: for each node", "[ASTSipNode]") {
+    // make an ASTForRangeStmt node
+    auto item = std::make_shared<ASTVariableExpr>("x");
+    auto list = std::make_shared<ASTVariableExpr>("y");
+    auto body = std::make_shared<ASTOutputStmt>(std::make_shared<ASTVariableExpr>("bodyContents"));
+
+    auto forEachNode = std::make_shared<ASTForEachStmt>(item, list, body);
+
+    // test the getters
+    auto itemVal = item.get();
+    REQUIRE(forEachNode->getItem() == itemVal);
+
+    auto listVal = list.get();
+    REQUIRE(forEachNode->getList() == listVal);
+
+    auto bodyVal = body.get();
+    REQUIRE(forEachNode->getBody() == bodyVal);
+
+    // make sure it has 3 children
+    REQUIRE(forEachNode->getChildren().size() == 3);
+    bool itemFound, listFound, bodyFound;
+    for(auto &child : forEachNode->getChildren()){
+        auto childVal = child.get();
+        if(childVal == itemVal){
+            itemFound = true;
+        } else if(childVal == listVal){
+            listFound = true;
+        } else if(childVal == bodyVal){
+            bodyFound = true;
+        }
+    }
+    REQUIRE((itemFound && listFound && bodyFound));
+
+    // test the accept method
+    EndVisitResults forEachVisitor;
+    forEachNode->accept(&forEachVisitor);
+    std::string expected[] = {"x","y","bodyContents","output bodyContents;"};
+    for (int i=0; i < 4; i++) {
+        REQUIRE(forEachVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printForEachNode;
+    printForEachNode << *forEachNode;
+    REQUIRE(printForEachNode.str() == "for (x : y) output bodyContents;");
+}
