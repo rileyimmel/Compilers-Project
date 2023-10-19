@@ -142,15 +142,14 @@ KNOT : 'not' ;
 KAND : 'and' ;
 KOR : 'or' ;
 KFOR : 'for' ;
-KTRUE : 'true' ;
-KFALSE : 'false' ;
 KBY : 'by' ;
 KOF : 'of' ;
 
-BOOLEAN : 'true' | 'false' ;
 
 // Keyword to declare functions as polymorphic
 KPOLY   : 'poly' ;
+
+//BOOLEAN : 'true' | 'false' ;
 
 IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_]* ;
 

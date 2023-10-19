@@ -1,7 +1,10 @@
-add_executable(frontend_unit_tests)
+add_executable(frontend_unit_tests
+        ASTSipNodeTest.cpp
+        ASTSipNodeTest.cpp)
 target_sources(
   frontend_unit_tests
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/TIPParserTest.cpp
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ASTSipNodeTest.cpp
+          ${CMAKE_CURRENT_SOURCE_DIR}/TIPParserTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/SIPParserTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/ASTBuilderTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/ASTPrinterTest.cpp
@@ -12,12 +15,15 @@ target_sources(
           ${CMAKE_CURRENT_SOURCE_DIR}/treetypes/ASTProgramTest.cpp)
 target_include_directories(
   frontend_unit_tests
-  PRIVATE ${CMAKE_SOURCE_DIR}/src/error
+  PRIVATE ${CMAKE_SOURCE_DIR}/src
+          ${CMAKE_SOURCE_DIR}/src/error
           ${CMAKE_SOURCE_DIR}/src/frontend/
           ${CMAKE_SOURCE_DIR}/src/frontend/ast
           ${CMAKE_SOURCE_DIR}/src/frontend/ast/treetypes
           ${CMAKE_SOURCE_DIR}/src/frontend/prettyprint
           ${CMAKE_SOURCE_DIR}/src/frontend/iterators
+          ${CMAKE_SOURCE_DIR}/test
+          ${CMAKE_SOURCE_DIR}/test/unit
           ${CMAKE_SOURCE_DIR}/test/unit/helpers
           ${CMAKE_SOURCE_DIR}/test/unit/matchers)
 target_link_libraries(
