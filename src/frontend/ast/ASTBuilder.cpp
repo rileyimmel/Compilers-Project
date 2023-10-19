@@ -541,7 +541,7 @@ Any ASTBuilder::visitTernaryExpr(TIPParser::TernaryExprContext *ctx) {
 		LOG_S(1) << "Built AST node " << *visitedStmt;
 
 		// Set source location
-		visitedStmt->setLocation(ctx->getStart()->getLine(),
+		visitedExpr->setLocation(ctx->getStart()->getLine(),
 														 ctx->getStart()->getCharPositionInLine());
 		return "";
 }
