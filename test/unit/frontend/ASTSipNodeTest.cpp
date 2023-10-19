@@ -69,25 +69,19 @@ TEST_CASE("ASTSipNodeTest: ternary node", "[ASTSipNode]") {
     auto ternNode = std::make_shared<ASTTernaryExpr>(cond, left, right);
 
     // test the getters
-    auto condVal = cond.get();
-    REQUIRE(ternNode->getCond() == condVal);
-
-    auto leftVal = left.get();
-    REQUIRE(ternNode->getTrue() == leftVal);
-
-    auto rightVal = right.get();
-    REQUIRE(ternNode->getFalse() == rightVal);
+    REQUIRE(ternNode->getCond() == cond.get());
+    REQUIRE(ternNode->getTrue() == left.get());
+    REQUIRE(ternNode->getFalse() == right.get());
 
     // make sure it has 3 children
     REQUIRE(ternNode->getChildren().size() == 3);
     bool condFound, leftFound, rightFound;
     for(auto &child : ternNode->getChildren()){
-        auto childVal = child.get();
-        if(childVal == condVal){
+        if(child.get() == cond.get()){
             condFound = true;
-        } else if(childVal == leftVal){
+        } else if(child.get() == left.get()){
             leftFound = true;
-        } else if(childVal == rightVal){
+        } else if(child.get() == right.get()){
             rightFound = true;
         }
     }
@@ -114,39 +108,28 @@ TEST_CASE("ASTSipNodeTest: for range with step node", "[ASTSipNode]") {
     auto end = std::make_shared<ASTNumberExpr>(10);
     auto step = std::make_shared<ASTNumberExpr>(2);
     auto body = std::make_shared<ASTOutputStmt>(std::make_shared<ASTVariableExpr>("bodyContents"));
-
     auto forRangeNode = std::make_shared<ASTForRangeStmt>(iter, start, end, step, body);
 
     // test the getters
-    auto iterVal = iter.get();
-    REQUIRE(forRangeNode->getIter() == iterVal);
-
-    auto startVal = start.get();
-    REQUIRE(forRangeNode->getRStart() == startVal);
-
-    auto endVal = end.get();
-    REQUIRE(forRangeNode->getREnd() == endVal);
-
-    auto stepVal = step.get();
-    REQUIRE(forRangeNode->getStep() == stepVal);
-
-    auto bodyVal = body.get();
-    REQUIRE(forRangeNode->getBody() == bodyVal);
+    REQUIRE(forRangeNode->getIter() == iter.get());
+    REQUIRE(forRangeNode->getRStart() == start.get());
+    REQUIRE(forRangeNode->getREnd() == end.get());
+    REQUIRE(forRangeNode->getStep() == step.get());
+    REQUIRE(forRangeNode->getBody() == body.get());
 
     // make sure it has 5 children
     REQUIRE(forRangeNode->getChildren().size() == 5);
     bool iterFound, startFound, endFound, stepFound, bodyFound;
     for(auto &child : forRangeNode->getChildren()){
-        auto childVal = child.get();
-        if(childVal == iterVal){
+        if(child.get() == iter.get()){
             iterFound = true;
-        } else if(childVal == startVal){
+        } else if(child.get() == start.get()){
             startFound = true;
-        } else if(childVal == endVal){
+        } else if(child.get() == end.get()){
             endFound = true;
-        } else if(childVal == stepVal){
+        } else if(child.get() == step.get()){
             stepFound = true;
-        } else if(childVal == bodyVal){
+        } else if(child.get() == body.get()){
             bodyFound = true;
         }
     }
@@ -173,36 +156,26 @@ TEST_CASE("ASTSipNodeTest: for range without step node", "[ASTSipNode]") {
     auto end = std::make_shared<ASTNumberExpr>(10);
     auto step = nullptr;
     auto body = std::make_shared<ASTOutputStmt>(std::make_shared<ASTVariableExpr>("bodyContents"));
-
     auto forRangeNode = std::make_shared<ASTForRangeStmt>(iter, start, end, step, body);
 
     // test the getters
-    auto iterVal = iter.get();
-    REQUIRE(forRangeNode->getIter() == iterVal);
-
-    auto startVal = start.get();
-    REQUIRE(forRangeNode->getRStart() == startVal);
-
-    auto endVal = end.get();
-    REQUIRE(forRangeNode->getREnd() == endVal);
-
+    REQUIRE(forRangeNode->getIter() == iter.get());
+    REQUIRE(forRangeNode->getRStart() == start.get());
+    REQUIRE(forRangeNode->getREnd() == end.get());
     REQUIRE(forRangeNode->getStep() == nullptr);
-
-    auto bodyVal = body.get();
-    REQUIRE(forRangeNode->getBody() == bodyVal);
+    REQUIRE(forRangeNode->getBody() == body.get());
 
     // make sure it has 4 children
     REQUIRE(forRangeNode->getChildren().size() == 4);
     bool iterFound, startFound, endFound, bodyFound;
     for(auto &child : forRangeNode->getChildren()){
-        auto childVal = child.get();
-        if(childVal == iterVal){
+        if(child.get() == iter.get()){
             iterFound = true;
-        } else if(childVal == startVal){
+        } else if(child.get() == start.get()){
             startFound = true;
-        } else if(childVal == endVal){
+        } else if(child.get() == end.get()){
             endFound = true;
-        } else if(childVal == bodyVal){
+        } else if(child.get() == body.get()){
             bodyFound = true;
         }
     }
@@ -227,29 +200,22 @@ TEST_CASE("ASTSipNodeTest: for each node", "[ASTSipNode]") {
     auto item = std::make_shared<ASTVariableExpr>("x");
     auto list = std::make_shared<ASTVariableExpr>("y");
     auto body = std::make_shared<ASTOutputStmt>(std::make_shared<ASTVariableExpr>("bodyContents"));
-
     auto forEachNode = std::make_shared<ASTForEachStmt>(item, list, body);
 
     // test the getters
-    auto itemVal = item.get();
-    REQUIRE(forEachNode->getItem() == itemVal);
-
-    auto listVal = list.get();
-    REQUIRE(forEachNode->getList() == listVal);
-
-    auto bodyVal = body.get();
-    REQUIRE(forEachNode->getBody() == bodyVal);
+    REQUIRE(forEachNode->getItem() == item.get());
+    REQUIRE(forEachNode->getList() == list.get());
+    REQUIRE(forEachNode->getBody() == body.get());
 
     // make sure it has 3 children
     REQUIRE(forEachNode->getChildren().size() == 3);
     bool itemFound, listFound, bodyFound;
     for(auto &child : forEachNode->getChildren()){
-        auto childVal = child.get();
-        if(childVal == itemVal){
+        if(child.get() == item.get()){
             itemFound = true;
-        } else if(childVal == listVal){
+        } else if(child.get() == list.get()){
             listFound = true;
-        } else if(childVal == bodyVal){
+        } else if(child.get() == body.get()){
             bodyFound = true;
         }
     }
@@ -275,9 +241,7 @@ TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
     auto one = std::make_shared<ASTVariableExpr>("y");
     auto two = std::make_shared<ASTVariableExpr>("z");
     std::vector<std::shared_ptr<ASTExpr>> items{zero, one, two};
-
     std::vector<ASTExpr*> vals{zero.get(), one.get(), two.get()};
-
     auto arrNode = std::make_shared<ASTArrExpr>(items);
 
     // test the getter
@@ -292,12 +256,11 @@ TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
     REQUIRE(arrNode->getChildren().size() == 3);
     bool zeroFound, oneFound, twoFound;
     for(auto &child : arrNode->getChildren()){
-        auto childVal = child.get();
-        if(childVal == vals[0]){
+        if(child.get() == vals[0]){
             zeroFound = true;
-        } else if(childVal == vals[1]){
+        } else if(child.get() == vals[1]){
             oneFound = true;
-        } else if(childVal == vals[2]){
+        } else if(child.get() == vals[2]){
             twoFound = true;
         }
     }
@@ -321,7 +284,6 @@ TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
     // make an ASTArrExpr node
     auto left = std::make_shared<ASTVariableExpr>("x");
     auto right = std::make_shared<ASTVariableExpr>("y");
-
     auto arrOfNode = std::make_shared<ASTArrOfExpr>(left, right);
 
     // test the getter
@@ -332,10 +294,9 @@ TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
     REQUIRE(arrOfNode->getChildren().size() == 2);
     bool leftFound, rightFound;
     for(auto &child : arrOfNode->getChildren()){
-        auto childVal = child.get();
-        if(childVal == left.get()){
+        if(child.get() == left.get()){
             leftFound = true;
-        } else if(childVal == right.get()){
+        } else if(child.get() == right.get()){
             rightFound = true;
         }
     }
