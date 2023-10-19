@@ -1140,3 +1140,7 @@ llvm::Value *ASTForEachStmt::codegen() {
 llvm::Value *ASTArrExpr::codegen() {
     return nullptr;
 }
+
+llvm::Value *ASTArrOfExpr::codegen() {
+    return nullptr;
+}

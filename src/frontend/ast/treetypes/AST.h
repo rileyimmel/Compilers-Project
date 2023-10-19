@@ -40,3 +40,4 @@
 #include "ASTForRangeStmt.h"
 #include "ASTForEachStmt.h"
 #include "ASTArrExpr.h"
+#include "ASTArrOfExpr.h"

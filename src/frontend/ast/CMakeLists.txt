@@ -4,7 +4,9 @@ add_library(ast
         treetypes/ASTForEachStmt.h
         treetypes/ASTForEachStmt.cpp
         treetypes/ASTArrExpr.h
-        treetypes/ASTArrExpr.cpp)
+        treetypes/ASTArrExpr.cpp
+        treetypes/ASTArrOfExpr.h
+        treetypes/ASTArrOfExpr.cpp)
 target_sources(
   ast
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ASTBuilder.cpp

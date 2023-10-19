@@ -327,6 +327,17 @@ void PrettyPrinter::endVisit(ASTArrExpr *element) {
             "]");
 }
 
+void PrettyPrinter::endVisit(ASTArrOfExpr *element) {
+    std::string rightString = visitResults.back();
+    visitResults.pop_back();
+
+    std::string leftString = visitResults.back();
+    visitResults.pop_back();
+
+    std::string arrOfString = indent() + "[" + leftString + " of " + rightString + "]";
+    visitResults.push_back(arrOfString);
+}
+
 std::string PrettyPrinter::indent() const {
   return std::string(indentLevel * indentSize, indentChar);
 }

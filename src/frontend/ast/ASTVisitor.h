@@ -79,4 +79,6 @@ public:
   virtual void endVisit(ASTForEachStmt *element) {}
   virtual bool visit(ASTArrExpr *element) { return true; }
   virtual void endVisit(ASTArrExpr *element) {}
+  virtual bool visit(ASTArrOfExpr *element) { return true; }
+  virtual void endVisit(ASTArrOfExpr *element) {}
 };

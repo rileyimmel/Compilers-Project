@@ -316,3 +316,41 @@ TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
     printArrNode << *arrNode;
     REQUIRE(printArrNode.str() == "[x,y,z]");
 }
+
+TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
+    // make an ASTArrExpr node
+    auto left = std::make_shared<ASTVariableExpr>("x");
+    auto right = std::make_shared<ASTVariableExpr>("y");
+
+    auto arrOfNode = std::make_shared<ASTArrOfExpr>(left, right);
+
+    // test the getter
+    REQUIRE(arrOfNode->getLeft() == left.get());
+    REQUIRE(arrOfNode->getRight() == right.get());
+
+    // make sure it has 2 children
+    REQUIRE(arrOfNode->getChildren().size() == 2);
+    bool leftFound, rightFound;
+    for(auto &child : arrOfNode->getChildren()){
+        auto childVal = child.get();
+        if(childVal == left.get()){
+            leftFound = true;
+        } else if(childVal == right.get()){
+            rightFound = true;
+        }
+    }
+    REQUIRE((leftFound && rightFound));
+
+    // test the accept method
+    EndVisitResults arrOfVisitor;
+    arrOfNode->accept(&arrOfVisitor);
+    std::string expected[] = {"x","y"};
+    for (int i=0; i < 2; i++) {
+        REQUIRE(arrOfVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printArrOfNode;
+    printArrOfNode << *arrOfNode;
+    REQUIRE(printArrOfNode.str() == "[x of y]");
+}
