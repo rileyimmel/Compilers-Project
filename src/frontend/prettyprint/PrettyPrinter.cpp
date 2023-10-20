@@ -334,7 +334,7 @@ void PrettyPrinter::endVisit(ASTArrOfExpr *element) {
     std::string leftString = visitResults.back();
     visitResults.pop_back();
 
-    std::string arrOfString = indent() + "[" + leftString + " of " + rightString + "]";
+    std::string arrOfString = "[" + leftString + " of " + rightString + "]";
     visitResults.push_back(arrOfString);
 }
 
