@@ -1,7 +1,7 @@
 add_executable(frontend_unit_tests
         SIPASTNodeTest.cpp
         SIPASTNodeTest.cpp
-        treetypes/SIPPrettyPrinterTest.cpp
+        SIPPrettyPrinterTest.cpp
         SIPASTNodeTest.cpp
         SIPASTPrinterTest.cpp
 )
@@ -18,7 +18,7 @@ target_sources(
           ${CMAKE_CURRENT_SOURCE_DIR}/PreOrderIteratorTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/SyntaxTreeTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/treetypes/ASTProgramTest.cpp
-          ${CMAKE_CURRENT_SOURCE_DIR}/treetypes/SIPPrettyPrinterTest.cpp)
+          ${CMAKE_CURRENT_SOURCE_DIR}/SIPPrettyPrinterTest.cpp)
 target_include_directories(
   frontend_unit_tests
   PRIVATE ${CMAKE_SOURCE_DIR}/src
