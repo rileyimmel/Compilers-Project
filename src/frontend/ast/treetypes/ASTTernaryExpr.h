@@ -5,7 +5,6 @@
 /*! \brief Class for a ternary operator.
  */
 class ASTTernaryExpr : public ASTExpr {
-		std::string OP;
 		std::shared_ptr<ASTExpr> COND, TRUE, FALSE;
 
 public:

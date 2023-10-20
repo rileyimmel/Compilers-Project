@@ -261,7 +261,7 @@ void PrettyPrinter::endVisit(ASTTernaryExpr *element) {
 		std::string condString = visitResults.back();
 		visitResults.pop_back();
 
-		std::string ternaryString = indent() + condString + " ? " + trueString + " : " + falseString + ";";
+		std::string ternaryString = condString + " ? " + trueString + " : " + falseString;
 
 		visitResults.push_back(ternaryString);
 }
