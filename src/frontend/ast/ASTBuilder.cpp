@@ -537,7 +537,7 @@ Any ASTBuilder::visitTernaryExpr(TIPParser::TernaryExprContext *ctx) {
 
 		visitedExpr = std::make_shared<ASTTernaryExpr>(cond, trueResult, falseResult);
 
-		LOG_S(1) << "Built AST node " << *visitedStmt;
+		LOG_S(1) << "Built AST node " << *visitedExpr;
 
 		// Set source location
 		visitedExpr->setLocation(ctx->getStart()->getLine(),
@@ -621,7 +621,7 @@ Any ASTBuilder::visitArrOfExpr(TIPParser::ArrOfExprContext *ctx) {
 
     visitedExpr = std::make_shared<ASTArrOfExpr>(left, right);
 
-    LOG_S(1) << "Built AST node " << *visitedStmt;
+    LOG_S(1) << "Built AST node " << *visitedExpr;
 
     // Set source location
     visitedExpr->setLocation(ctx->getStart()->getLine(),
@@ -667,6 +667,30 @@ Any ASTBuilder::visitLenExpr(TIPParser::LenExprContext *ctx) {
 
 Any ASTBuilder::visitNotExpr(TIPParser::NotExprContext *ctx) {
     visitUnaryExpr(ctx->KNOT()->getText(), ctx);
+    return "";
+} // LCOV_EXCL_LINE
+
+template <typename T>
+void ASTBuilder::visitIncDecStmt(T *ctx, const std::string &op) {
+    visit(ctx->expr());
+    auto left = visitedExpr;
+
+    visitedStmt = std::make_shared<ASTIncDecStmt>(left, op);
+
+    LOG_S(1) << "Built AST node " << *visitedStmt;
+
+    // Set source location
+    visitedStmt->setLocation(ctx->getStart()->getLine(),
+                             ctx->getStart()->getCharPositionInLine());
+}
+
+Any ASTBuilder::visitIncStmt(TIPParser::IncStmtContext *ctx) {
+    visitIncDecStmt(ctx, ctx->INC()->getText());
+    return "";
+} // LCOV_EXCL_LINE
+
+Any ASTBuilder::visitDecStmt(TIPParser::DecStmtContext *ctx) {
+    visitIncDecStmt(ctx, ctx->DEC()->getText());
     return "";
 } // LCOV_EXCL_LINE
 

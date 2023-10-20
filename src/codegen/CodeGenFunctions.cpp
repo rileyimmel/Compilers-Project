@@ -1152,3 +1152,7 @@ llvm::Value *ASTArrElemRefExpr::codegen() {
 llvm::Value *ASTUnaryExpr::codegen() {
     return nullptr;
 }
+
+llvm::Value *ASTIncDecStmt::codegen() {
+  return nullptr;
+}

@@ -43,3 +43,4 @@
 #include "ASTArrOfExpr.h"
 #include "ASTArrElemRefExpr.h"
 #include "ASTUnaryExpr.h"
+#include "ASTIncDecStmt.h"

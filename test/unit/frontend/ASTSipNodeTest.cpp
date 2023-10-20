@@ -27,6 +27,7 @@ public:
     void endVisit(ASTArrOfExpr *element) override { captureResults(element); }
     void endVisit(ASTArrElemRefExpr *element) override { captureResults(element); }
     void endVisit(ASTUnaryExpr *element) override { captureResults(element); }
+    void endVisit(ASTIncDecStmt *element) override { captureResults(element); }
 };
 
 TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
@@ -418,4 +419,53 @@ TEST_CASE("ASTSipNodeTest: unary not op node", "[ASTSipNode]") {
     std::stringstream printNotNode;
     printNotNode << *notNode;
     REQUIRE(printNotNode.str() == "not x");
+}
+
+TEST_CASE("ASTSipNodeTest: inc dec stmt node", "[ASTSipNode]") {
+    // make an inc and a dec node
+    std::string opInc = "++";
+    auto leftInc = std::make_shared<ASTVariableExpr>("x");
+    auto incNode = std::make_shared<ASTIncDecStmt>(leftInc, opInc);
+
+    // test the getter
+    REQUIRE(incNode->getLeft() == leftInc.get());
+    REQUIRE(incNode->getOp() == opInc);
+
+    // make sure it has 1 child
+    REQUIRE(incNode->getChildren().size() == 1);
+    REQUIRE(incNode->getChildren().back().get() == leftInc.get());
+
+    // test the accept method
+    EndVisitResults incVisitor;
+    incNode->accept(&incVisitor);
+    std::string expectedInc[] = {"x","x++;"};
+    for (int i=0; i < 2; i++) {
+        REQUIRE(incVisitor.resultStrings.at(i) == expectedInc[i]);
+    }
+
+    // test the print method
+    std::stringstream printIncNode;
+    printIncNode << *incNode;
+    REQUIRE(printIncNode.str() == "x++;");
+
+    std::string opDec = "--";
+    auto leftDec = std::make_shared<ASTVariableExpr>("y");
+    auto decNode = std::make_shared<ASTIncDecStmt>(leftDec, opDec);
+
+    REQUIRE(decNode->getLeft() == leftDec.get());
+    REQUIRE(decNode->getOp() == opDec);
+
+    REQUIRE(decNode->getChildren().size() == 1);
+    REQUIRE(decNode->getChildren().back().get() == leftDec.get());
+
+    EndVisitResults decVisitor;
+    decNode->accept(&decVisitor);
+    std::string expectedDec[] = {"y","y--;"};
+    for (int i=0; i < 2; i++) {
+        REQUIRE(decVisitor.resultStrings.at(i) == expectedDec[i]);
+    }
+
+    std::stringstream printDecNode;
+    printDecNode << *decNode;
+    REQUIRE(printDecNode.str() == "y--;");
 }

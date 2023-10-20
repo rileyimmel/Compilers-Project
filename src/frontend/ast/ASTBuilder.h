@@ -42,6 +42,12 @@ public:
    * SIP helper function for unary expressions
    */
   template <typename T> void visitUnaryExpr(const std::string &op, T *ctx);
+  /*
+  * SIP helper function for unary expressions
+  */
+  template <typename T> void visitIncDecStmt(T *ctx, const std::string &op);
+
+
 
   Any visitFunction(TIPParser::FunctionContext *ctx) override;
   Any visitNegNumber(TIPParser::NegNumberContext *ctx) override;
@@ -84,4 +90,6 @@ public:
   Any visitArrElemRefExpr(TIPParser::ArrElemRefExprContext *ctx) override;
   Any visitLenExpr(TIPParser::LenExprContext *ctx) override;
   Any visitNotExpr(TIPParser::NotExprContext *ctx) override;
+  Any visitIncStmt(TIPParser::IncStmtContext *ctx) override;
+  Any visitDecStmt(TIPParser::DecStmtContext *ctx) override;
 };
