@@ -469,3 +469,116 @@ TEST_CASE("ASTSipNodeTest: inc dec stmt node", "[ASTSipNode]") {
     printDecNode << *decNode;
     REQUIRE(printDecNode.str() == "y--;");
 }
+
+TEST_CASE("ASTSipNodeTest: modulo op", "[ASTSipNode]") {
+    // make an inc and a dec node
+    std::string op = "%";
+    auto left = std::make_shared<ASTVariableExpr>("x");
+    auto right = std::make_shared<ASTVariableExpr>("y");
+    auto modNode = std::make_shared<ASTBinaryExpr>(op, left, right);
+
+    // test the getter
+    REQUIRE(modNode->getLeft() == left.get());
+    REQUIRE(modNode->getOp() == op);
+    REQUIRE(modNode->getRight() == right.get());
+
+    // make sure it has 2 children
+    REQUIRE(modNode->getChildren().size() == 2);
+    bool leftFound, rightFound;
+    for(auto &child : modNode->getChildren()){
+        if(child.get() == left.get()){
+            leftFound = true;
+        } else if(child.get() == right.get()){
+            rightFound = true;
+        }
+    }
+    REQUIRE((leftFound && rightFound));
+
+    // test the accept method
+    EndVisitResults modVisitor;
+    modNode->accept(&modVisitor);
+    std::string expected[] = {"x","y","(x%y)"};
+    for (int i=0; i < 3; i++) {
+        REQUIRE(modVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printModNode;
+    printModNode << *modNode;
+    REQUIRE(printModNode.str() == "(x%y)");
+}
+
+TEST_CASE("ASTSipNodeTest: and op & or op", "[ASTSipNode]") {
+    // make an and & an or node
+    std::string opAnd = "and";
+    auto leftAnd = std::make_shared<ASTVariableExpr>("x");
+    auto rightAnd = std::make_shared<ASTVariableExpr>("y");
+    auto andNode = std::make_shared<ASTBinaryExpr>(opAnd, leftAnd, rightAnd);
+
+    // test the getter
+    REQUIRE(andNode->getLeft() == leftAnd.get());
+    REQUIRE(andNode->getOp() == opAnd);
+    REQUIRE(andNode->getRight() == rightAnd.get());
+
+    // make sure it has 2 children
+    REQUIRE(andNode->getChildren().size() == 2);
+    bool leftAndFound, rightAndFound;
+    for(auto &child : andNode->getChildren()){
+        if(child.get() == leftAnd.get()){
+            leftAndFound = true;
+        } else if(child.get() == rightAnd.get()){
+            rightAndFound = true;
+        }
+    }
+    REQUIRE((leftAndFound && rightAndFound));
+
+    // test the accept method
+    EndVisitResults andVisitor;
+    andNode->accept(&andVisitor);
+    std::string expectedAnd[] = {"x","y","(xandy)"};
+    for (int i=0; i < 3; i++) {
+        REQUIRE(andVisitor.resultStrings.at(i) == expectedAnd[i]);
+    }
+
+    // test the print method
+    std::stringstream printAndNode;
+    printAndNode << *andNode;
+    REQUIRE(printAndNode.str() == "(xandy)");
+
+    // or
+
+    std::string opOr = "or";
+    auto leftOr = std::make_shared<ASTVariableExpr>("a");
+    auto rightOr = std::make_shared<ASTVariableExpr>("b");
+    auto orNode = std::make_shared<ASTBinaryExpr>(opOr, leftOr, rightOr);
+
+    // test the getter
+    REQUIRE(orNode->getLeft() == leftOr.get());
+    REQUIRE(orNode->getOp() == opOr);
+    REQUIRE(orNode->getRight() == rightOr.get());
+
+    // make sure it has 2 children
+    REQUIRE(orNode->getChildren().size() == 2);
+    bool leftOrFound, rightOrFound;
+    for(auto &child : orNode->getChildren()){
+        if(child.get() == leftOr.get()){
+            leftOrFound = true;
+        } else if(child.get() == rightOr.get()){
+            rightOrFound = true;
+        }
+    }
+    REQUIRE((leftOrFound && rightOrFound));
+
+    // test the accept method
+    EndVisitResults orVisitor;
+    orNode->accept(&orVisitor);
+    std::string expectedOr[] = {"a","b","(aorb)"};
+    for (int i=0; i < 3; i++) {
+        REQUIRE(orVisitor.resultStrings.at(i) == expectedOr[i]);
+    }
+
+    // test the print method
+    std::stringstream printOrNode;
+    printOrNode << *orNode;
+    REQUIRE(printOrNode.str() == "(aorb)");
+}
