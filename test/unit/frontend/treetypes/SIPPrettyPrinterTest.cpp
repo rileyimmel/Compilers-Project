@@ -31,6 +31,29 @@ TEST_CASE("PrettyPrinter: Test error stmt printing", "[PrettyPrinter]") {
     REQUIRE(ppString == expected);
 }
 
+TEST_CASE("PrettyPrinter: Test inc dec statement printing", "[PrettyPrinter]") {
+    std::stringstream stream;
+    stream << R"(prog() { var x, y; x = 0; y = 1; x--; y++; return 0;})";
+
+    std::string expected = R"(prog()
+{
+  var x, y;
+  x = 0;
+  y = 1;
+  x--;
+  y++;
+  return 0;
+}
+)";
+
+    std::stringstream pp;
+    auto ast = ASTHelper::build_ast(stream);
+    PrettyPrinter::print(ast.get(), pp, ' ', 2);
+    std::string ppString = GeneralHelper::removeTrailingWhitespace(pp.str());
+    expected = GeneralHelper::removeTrailingWhitespace(expected);
+    REQUIRE(ppString == expected);
+}
+
 TEST_CASE("PrettyPrinter: Test records and record access", "[PrettyPrinter]") {
     std::stringstream stream;
     stream
