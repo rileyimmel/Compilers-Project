@@ -8,7 +8,7 @@ void ASTTernaryExpr::accept(ASTVisitor *visitor) {
 				getFalse()->accept(visitor);
 		}
 		visitor->endVisit(this);
-}
+} // LCOV_EXCL_LINE
 
 std::ostream &ASTTernaryExpr::print(std::ostream &out) const {
 		out << *getCond() << " ? " << *getTrue() << " : " << *getFalse();
@@ -21,4 +21,4 @@ std::vector<std::shared_ptr<ASTNode>> ASTTernaryExpr::getChildren() {
 		children.push_back(TRUE);
 		children.push_back(FALSE);
 		return children;
-}
+} // LCOV_EXCL_LINE

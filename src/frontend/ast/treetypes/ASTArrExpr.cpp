@@ -8,11 +8,11 @@ ASTArrExpr::ASTArrExpr(
         std::shared_ptr<ASTExpr> e = element;
         this->ELEMENTS.push_back(e);
     }
-}
+} // LCOV_EXCL_LINE
 
 std::vector<ASTExpr *> ASTArrExpr::getElements() const {
     return rawRefs(ELEMENTS);
-}
+} // LCOV_EXCL_LINE
 
 void ASTArrExpr::accept(ASTVisitor *visitor) {
     if (visitor->visit(this)) {
@@ -21,7 +21,7 @@ void ASTArrExpr::accept(ASTVisitor *visitor) {
         }
     }
     visitor->endVisit(this);
-}
+} // LCOV_EXCL_LINE
 
 std::ostream &ASTArrExpr::print(std::ostream &out) const {
     out << "[";
@@ -44,4 +44,4 @@ std::vector<std::shared_ptr<ASTNode>> ASTArrExpr::getChildren() {
         children.push_back(element);
     }
     return children;
-}
+} // LCOV_EXCL_LINE

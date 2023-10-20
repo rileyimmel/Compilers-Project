@@ -77,6 +77,7 @@ TEST_CASE("SIPASTPrinterTest: SIP expression printers", "[SIPASTNodePrint]") {
         z = -y;
         x = y and z;
         x = y or z;
+        x = y % z;
         return 0;
       }
     )";
@@ -92,7 +93,8 @@ TEST_CASE("SIPASTPrinterTest: SIP expression printers", "[SIPASTNodePrint]") {
                                       "-1",
                                       "-y",
                                       "(yandz)",
-                                      "(yorz)"};
+                                      "(yorz)",
+                                      "(y%z)"};
 
     auto ast = ASTHelper::build_ast(stream);
 

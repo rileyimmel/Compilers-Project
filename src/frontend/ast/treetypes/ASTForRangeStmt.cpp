@@ -12,7 +12,7 @@ void ASTForRangeStmt::accept(ASTVisitor *visitor) {
         getBody()->accept(visitor);
     }
     visitor->endVisit(this);
-}
+} // LCOV_EXCL_LINE
 
 std::ostream &ASTForRangeStmt::print(std::ostream &out) const {
     out << "for (" << *getIter() << " : " << *getRStart() << " .. " << *getREnd();
@@ -21,7 +21,7 @@ std::ostream &ASTForRangeStmt::print(std::ostream &out) const {
     }
     out << ") " << *getBody();
     return out;
-}
+} // LCOV_EXCL_LINE
 
 std::vector<std::shared_ptr<ASTNode>> ASTForRangeStmt::getChildren() {
     std::vector<std::shared_ptr<ASTNode>> children;
@@ -35,4 +35,4 @@ std::vector<std::shared_ptr<ASTNode>> ASTForRangeStmt::getChildren() {
     children.push_back(BODY);
 
     return children;
-}
+} // LCOV_EXCL_LINE

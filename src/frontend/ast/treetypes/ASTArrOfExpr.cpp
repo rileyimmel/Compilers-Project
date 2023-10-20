@@ -8,7 +8,7 @@ void ASTArrOfExpr::accept(ASTVisitor *visitor) {
         getRight()->accept(visitor);
     }
     visitor->endVisit(this);
-}
+} // LCOV_EXCL_LINE
 
 std::ostream &ASTArrOfExpr::print(std::ostream &out) const {
     out << "[" << *getLeft() << " of " << *getRight() << "]";
@@ -20,4 +20,4 @@ std::vector<std::shared_ptr<ASTNode>> ASTArrOfExpr::getChildren() {
     children.push_back(LEFT);
     children.push_back(RIGHT);
     return children;
-}
+} // LCOV_EXCL_LINE
