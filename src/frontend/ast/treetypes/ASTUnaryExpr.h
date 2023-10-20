@@ -2,8 +2,7 @@
 
 #include "ASTExpr.h"
 
-/*! \brief Class for prefix length op
- * #[E1] = 1
+/*! \brief Class for unary operators
  * */
 class ASTUnaryExpr : public ASTExpr {
     std::string OP;
