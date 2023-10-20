@@ -1,5 +1,9 @@
+## Deliverable 2: Extending the frontend
+
+### Scope
 The scope of this deliverable was to extend the frontend of SIP to accommodate the new grammar rules/extensions created in Deliverable 1. This involved creating new AST node types, implementing the visitor pattern for new nodes, specifying new operators, adding new functionality to existing nodes, and specifying pretty print behavior.
 
+### Our structure
 It was decided to create 9 new nodes, and combine as much new functionality into existing nodes as reasonably possible. The structure is as follows:
 
 - boolean type > new node
@@ -22,6 +26,7 @@ It was decided to create 9 new nodes, and combine as much new functionality into
 
 The above decision seemed logical and simplest for the sake of conciseness, while not stretching the bounds of each node unreasonably.
 
+### Testing
 It was decided that our main testing principle would be to achieve 100% statement coverage for all new code written. To achieve this, testing was split into multiple categories, namely, SIPASTNodeTests, SIPASTPrinterTests, and SIPPrettyPrinterTests.
 
 SIPASTNodeTests were focused on the structure of each node. They were created while generating new AST nodes and modifying existing nodes, and test the entire structure of the node. For example:
@@ -32,5 +37,6 @@ The above test case was repeated for each new or modified node. This allowed 100
 
 SIPASTPrinterTests and SIPASTPrettyPrinterTests both take in a program and an expected output, and compare the result of the build of the program to the expected output while using their respective print methods; i.e. the print method found in the specific AST node file for SIPASTPrinterTests, and the specific pretty printer method for that node. By including every new operator, statement, and expression, we were able to hit 100% statement coverage in frontend/prettyprint and frontend/ast.
 
+### Challenges
 Accounting for the difficulty of the deliverable, we found it initially challenging to understand the structure of the AST and it's modules and what exactly needed updating/additions. Once this was well understood, though, it seemed rather trivial to implement the necessary code. We were briefly tripped up with the creation of templates and the implementation of post-order traversals. Aside from that, there were not many large issues encountered.
 
