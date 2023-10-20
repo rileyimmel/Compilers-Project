@@ -35,3 +35,31 @@ TEST_CASE("ASTVisualizer: Generate dot graph", "[ASTVisualizer]") {
   REQUIRE(expectedEdgeCount ==
           GeneralHelper::countSubstrings(graph.str(), "->"));
 }
+
+TEST_CASE("ASTVisualizer: Doesn\'t process nodes without parents", "[ASTVisualizer]") {
+    std::stringstream stream;
+    stream << R"(
+      short() {
+        var x, y, z;
+        x = input;
+        y = alloc x;
+        *y = x;
+        z = *y;
+        return z;
+      }
+    )";
+
+    std::shared_ptr<ASTProgram> ast = std::move(ASTHelper::build_ast(stream));
+    SyntaxTree syntaxTree(ast);
+
+    std::stringstream graph;
+    ASTVisualizer visualizer(graph);
+    visualizer.buildGraph(syntaxTree);
+
+    int expectedNodeCount = 24;
+    int expectedEdgeCount = 23;
+    REQUIRE(expectedNodeCount ==
+            GeneralHelper::countSubstrings(graph.str(), "label"));
+    REQUIRE(expectedEdgeCount ==
+            GeneralHelper::countSubstrings(graph.str(), "->"));
+}

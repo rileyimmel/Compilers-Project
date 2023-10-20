@@ -30,8 +30,7 @@ std::string joinWithDelim(std::vector<std::string> &visitResults,
     out += visitResults[i];
   visitResults.erase(visitResults.begin() + visitResults.size() - sz,
                      visitResults.end());
-  return out;
-}
+  return out;}
 
 void PrettyPrinter::endVisit(ASTProgram *element) {
   os << joinWithDelim(visitResults, "\n", element->getFunctions().size(), 1);

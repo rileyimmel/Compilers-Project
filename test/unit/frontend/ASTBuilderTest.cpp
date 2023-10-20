@@ -28,3 +28,5 @@ TEST_CASE("ASTBuilder: bad op string throws error", "[ASTBuilder]") {
 
   REQUIRE_THROWS_AS(tb.visitAdditiveExpr(&context), std::runtime_error);
 }
+
+
