@@ -30,7 +30,7 @@ public:
     void endVisit(ASTIncDecStmt *element) override { captureResults(element); }
 };
 
-TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: boolean nodes", "[SIPASTNode]") {
     // true node
     // make an ASTBoolExpr node
     auto TrueNode = std::make_shared<ASTBoolExpr>("true");
@@ -67,7 +67,7 @@ TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
     REQUIRE(printFalseNode.str() == "false");
 }
 
-TEST_CASE("ASTSipNodeTest: ternary node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: ternary node", "[SIPASTNode]") {
     // make an ASTTernaryExpr node
     auto x = std::make_shared<ASTVariableExpr>("x");
     auto y = std::make_shared<ASTVariableExpr>("y");
@@ -110,7 +110,7 @@ TEST_CASE("ASTSipNodeTest: ternary node", "[ASTSipNode]") {
     REQUIRE(printTernNode.str() == "(x>y) ? 1 : 0");
 }
 
-TEST_CASE("ASTSipNodeTest: for range with step node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: for range with step node", "[SIPASTNode]") {
     // make an ASTForRangeStmt node
     auto iter = std::make_shared<ASTVariableExpr>("i");
     auto start = std::make_shared<ASTNumberExpr>(0);
@@ -158,7 +158,7 @@ TEST_CASE("ASTSipNodeTest: for range with step node", "[ASTSipNode]") {
     REQUIRE(printForRangeNode.str() == "for (i : 0 .. 10 by 2) output bodyContents;");
 }
 
-TEST_CASE("ASTSipNodeTest: for range without step node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: for range without step node", "[SIPASTNode]") {
     // make an ASTForRangeStmt node
     auto iter = std::make_shared<ASTVariableExpr>("i");
     auto start = std::make_shared<ASTNumberExpr>(0);
@@ -204,7 +204,7 @@ TEST_CASE("ASTSipNodeTest: for range without step node", "[ASTSipNode]") {
     REQUIRE(printForRangeNode.str() == "for (i : 0 .. 10) output bodyContents;");
 }
 
-TEST_CASE("ASTSipNodeTest: for each node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: for each node", "[SIPASTNode]") {
     // make an ASTForRangeStmt node
     auto item = std::make_shared<ASTVariableExpr>("x");
     auto list = std::make_shared<ASTVariableExpr>("y");
@@ -244,7 +244,7 @@ TEST_CASE("ASTSipNodeTest: for each node", "[ASTSipNode]") {
     REQUIRE(printForEachNode.str() == "for (x : y) output bodyContents;");
 }
 
-TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: array node", "[SIPASTNode]") {
     // make an ASTArrExpr node
     auto zero = std::make_shared<ASTVariableExpr>("x");
     auto one = std::make_shared<ASTVariableExpr>("y");
@@ -289,7 +289,7 @@ TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
     REQUIRE(printArrNode.str() == "[x,y,z]");
 }
 
-TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: array of node", "[SIPASTNode]") {
     // make an ASTArrOfExpr node
     auto left = std::make_shared<ASTVariableExpr>("x");
     auto right = std::make_shared<ASTVariableExpr>("y");
@@ -325,7 +325,7 @@ TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
     REQUIRE(printArrOfNode.str() == "[x of y]");
 }
 
-TEST_CASE("ASTSipNodeTest: array elem ref node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: array elem ref node", "[SIPASTNode]") {
     // make an ASTArrElemRefExpr node
     auto ptr = std::make_shared<ASTVariableExpr>("x");
     auto index = std::make_shared<ASTNumberExpr>(0);
@@ -361,7 +361,7 @@ TEST_CASE("ASTSipNodeTest: array elem ref node", "[ASTSipNode]") {
     REQUIRE(printArrElemRefNode.str() == "x[0]");
 }
 
-TEST_CASE("ASTSipNodeTest: unary len op node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: unary len op node", "[SIPASTNode]") {
     // make an ASTUnaryExpr node for '#'
     std::string op = "#";
     auto right = std::make_shared<ASTVariableExpr>("x");
@@ -391,7 +391,7 @@ TEST_CASE("ASTSipNodeTest: unary len op node", "[ASTSipNode]") {
     REQUIRE(printLenNode.str() == "#x");
 }
 
-TEST_CASE("ASTSipNodeTest: unary not op node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: unary not op node", "[SIPASTNode]") {
     // make an ASTUnaryExpr node for "not"
     std::string op = "not";
     auto right = std::make_shared<ASTVariableExpr>("x");
@@ -421,7 +421,7 @@ TEST_CASE("ASTSipNodeTest: unary not op node", "[ASTSipNode]") {
     REQUIRE(printNotNode.str() == "not x");
 }
 
-TEST_CASE("ASTSipNodeTest: inc dec stmt node", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: inc dec stmt node", "[SIPASTNode]") {
     // make an inc and a dec node
     std::string opInc = "++";
     auto leftInc = std::make_shared<ASTVariableExpr>("x");
@@ -470,7 +470,7 @@ TEST_CASE("ASTSipNodeTest: inc dec stmt node", "[ASTSipNode]") {
     REQUIRE(printDecNode.str() == "y--;");
 }
 
-TEST_CASE("ASTSipNodeTest: modulo op", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: modulo op", "[SIPASTNode]") {
     // make an inc and a dec node
     std::string op = "%";
     auto left = std::make_shared<ASTVariableExpr>("x");
@@ -508,7 +508,7 @@ TEST_CASE("ASTSipNodeTest: modulo op", "[ASTSipNode]") {
     REQUIRE(printModNode.str() == "(x%y)");
 }
 
-TEST_CASE("ASTSipNodeTest: and op & or op", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: and op & or op", "[SIPASTNode]") {
     // make an and & an or node
     std::string opAnd = "and";
     auto leftAnd = std::make_shared<ASTVariableExpr>("x");
@@ -583,7 +583,7 @@ TEST_CASE("ASTSipNodeTest: and op & or op", "[ASTSipNode]") {
     REQUIRE(printOrNode.str() == "(aorb)");
 }
 
-TEST_CASE("ASTSipNodeTest: negation with ASTExpr", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: negation with ASTExpr", "[SIPASTNode]") {
     // make a neg node with expr
     std::string op = "-";
     auto right = std::make_shared<ASTVariableExpr>("x");
@@ -611,7 +611,7 @@ TEST_CASE("ASTSipNodeTest: negation with ASTExpr", "[ASTSipNode]") {
     REQUIRE(printNegNode.str() == "-x");
 }
 
-TEST_CASE("ASTSipNodeTest: negation with ASTNumberExpr", "[ASTSipNode]") {
+TEST_CASE("SIPASTNodeTest: negation with ASTNumberExpr", "[SIPASTNode]") {
     // make a neg node with number
     std::string op = "-";
     auto right = std::make_shared<ASTNumberExpr>(1);
