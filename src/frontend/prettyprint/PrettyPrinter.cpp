@@ -349,13 +349,13 @@ void PrettyPrinter::endVisit(ASTArrElemRefExpr *element) {
 }
 
 void PrettyPrinter::endVisit(ASTUnaryExpr *element) {
-//    std::string indexString = visitResults.back();
-//    visitResults.pop_back();
-//    std::string ptrString = visitResults.back();
-//    visitResults.pop_back();
-//
-//    std::string elemRefString = ptrString + "[" + indexString + "]";
-//    visitResults.push_back(elemRefString);
+    std::string rightString = visitResults.back();
+    visitResults.pop_back();
+    if(element->getOp() == "not"){
+        visitResults.push_back(element->getOp() + " " + rightString);
+    } else{
+        visitResults.push_back(element->getOp() + rightString);
+    }
 }
 
 std::string PrettyPrinter::indent() const {
