@@ -1,9 +1,9 @@
 add_executable(frontend_unit_tests
-        ASTSipNodeTest.cpp
-        ASTSipNodeTest.cpp)
+        SIPASTNodeTest.cpp
+        SIPASTNodeTest.cpp)
 target_sources(
   frontend_unit_tests
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ASTSipNodeTest.cpp
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/SIPASTNodeTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/TIPParserTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/SIPParserTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/ASTBuilderTest.cpp

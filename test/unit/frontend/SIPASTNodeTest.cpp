@@ -582,3 +582,59 @@ TEST_CASE("ASTSipNodeTest: and op & or op", "[ASTSipNode]") {
     printOrNode << *orNode;
     REQUIRE(printOrNode.str() == "(aorb)");
 }
+
+TEST_CASE("ASTSipNodeTest: negation with ASTExpr", "[ASTSipNode]") {
+    // make a neg node with expr
+    std::string op = "-";
+    auto right = std::make_shared<ASTVariableExpr>("x");
+    auto negNode = std::make_shared<ASTUnaryExpr>(op, right);
+
+    // test the getter
+    REQUIRE(negNode->getOp() == op);
+    REQUIRE(negNode->getRight() == right.get());
+
+    // make sure it has 2 children
+    REQUIRE(negNode->getChildren().size() == 1);
+    REQUIRE(negNode->getChildren().back().get() == right.get());
+
+    // test the accept method
+    EndVisitResults negVisitor;
+    negNode->accept(&negVisitor);
+    std::string expected[] = {"x","-x"};
+    for (int i=0; i < 2; i++) {
+        REQUIRE(negVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printNegNode;
+    printNegNode << *negNode;
+    REQUIRE(printNegNode.str() == "-x");
+}
+
+TEST_CASE("ASTSipNodeTest: negation with ASTNumberExpr", "[ASTSipNode]") {
+    // make a neg node with number
+    std::string op = "-";
+    auto right = std::make_shared<ASTNumberExpr>(1);
+    auto negNode = std::make_shared<ASTUnaryExpr>(op, right);
+
+    // test the getter
+    REQUIRE(negNode->getOp() == op);
+    REQUIRE(negNode->getRight() == right.get());
+
+    // make sure it has 2 children
+    REQUIRE(negNode->getChildren().size() == 1);
+    REQUIRE(negNode->getChildren().back().get() == right.get());
+
+    // test the accept method
+    EndVisitResults negVisitor;
+    negNode->accept(&negVisitor);
+    std::string expected[] = {"1","-1"};
+    for (int i=0; i < 2; i++) {
+        REQUIRE(negVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printNegNode;
+    printNegNode << *negNode;
+    REQUIRE(printNegNode.str() == "-1");
+}
