@@ -92,4 +92,5 @@ public:
   Any visitNotExpr(TIPParser::NotExprContext *ctx) override;
   Any visitIncStmt(TIPParser::IncStmtContext *ctx) override;
   Any visitDecStmt(TIPParser::DecStmtContext *ctx) override;
+  Any visitArithmeticNegation(TIPParser::ArithmeticNegationContext *ctx) override;
 };

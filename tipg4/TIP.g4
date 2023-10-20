@@ -40,7 +40,8 @@ expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
      | expr '.' IDENTIFIER 			            #accessExpr
      | KNOT expr                                #notExpr
      | '*' expr 				                #deRefExpr
-     | SUB (NUMBER | expr)				        #negNumber
+     | SUB NUMBER				                #negNumber
+     | <assoc=right> SUB expr                   #arithmeticNegation
      | '&' expr					                #refExpr
      | expr op=(MUL | DIV | MOD) expr 		    #multiplicativeExpr
      | expr op=(ADD | SUB) expr 		        #additiveExpr
