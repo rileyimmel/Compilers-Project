@@ -360,7 +360,7 @@ void PrettyPrinter::endVisit(ASTUnaryExpr *element) {
 void PrettyPrinter::endVisit(ASTIncDecStmt *element) {
     std::string leftString = visitResults.back();
     visitResults.pop_back();
-    visitResults.push_back(leftString + element->getOp());
+    visitResults.push_back(indent() + leftString + element->getOp() + ';');
 }
 
 std::string PrettyPrinter::indent() const {
