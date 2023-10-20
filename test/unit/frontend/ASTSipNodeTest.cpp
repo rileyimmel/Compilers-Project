@@ -13,12 +13,20 @@ public:
     void captureResults(ASTNode *element) {
         std::stringstream ss; ss << *element; resultStrings.push_back(ss.str());
     }
-
-    void endVisit(ASTVariableExpr * element) override { captureResults(element); }
-    void endVisit(ASTBinaryExpr * element) override { captureResults(element); }
-    void endVisit(ASTNumberExpr * element) override { captureResults(element); }
-    void endVisit(ASTOutputStmt * element) override { captureResults(element); }
-
+    // TIP
+    void endVisit(ASTVariableExpr *element) override { captureResults(element); }
+    void endVisit(ASTBinaryExpr *element) override { captureResults(element); }
+    void endVisit(ASTNumberExpr *element) override { captureResults(element); }
+    void endVisit(ASTOutputStmt *element) override { captureResults(element); }
+    // SIP
+    void endVisit(ASTBoolExpr *element) override { captureResults(element); }
+    void endVisit(ASTTernaryExpr *element) override { captureResults(element); }
+    void endVisit(ASTForRangeStmt *element) override { captureResults(element); }
+    void endVisit(ASTForEachStmt *element) override { captureResults(element); }
+    void endVisit(ASTArrExpr *element) override { captureResults(element); }
+    void endVisit(ASTArrOfExpr *element) override { captureResults(element); }
+    void endVisit(ASTArrElemRefExpr *element) override { captureResults(element); }
+    void endVisit(ASTUnaryExpr *element) override { captureResults(element); }
 };
 
 TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
@@ -35,7 +43,7 @@ TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults trueVisitor;
     TrueNode->accept(&trueVisitor);
-    REQUIRE(trueVisitor.resultStrings.empty());
+    REQUIRE(trueVisitor.resultStrings.at(0) == "true");
 
     // test the print method
     std::stringstream printTrueNode;
@@ -51,7 +59,7 @@ TEST_CASE("ASTSipNodeTest: boolean nodes", "[ASTSipNode]") {
 
     EndVisitResults falseVisitor;
     FalseNode->accept(&falseVisitor);
-    REQUIRE(falseVisitor.resultStrings.empty());
+    REQUIRE(falseVisitor.resultStrings.at(0) == "false");
 
     std::stringstream printFalseNode;
     printFalseNode << *FalseNode;
@@ -90,8 +98,8 @@ TEST_CASE("ASTSipNodeTest: ternary node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults ternVisitor;
     ternNode->accept(&ternVisitor);
-    std::string expected[] = {"x","y","(x>y)"};
-    for (int i=0; i < 3; i++) {
+    std::string expected[] = {"x","y","(x>y)","1","0","(x>y) ? 1 : 0"};
+    for (int i=0; i < 6; i++) {
         REQUIRE(ternVisitor.resultStrings.at(i) == expected[i]);
     }
 
@@ -138,8 +146,8 @@ TEST_CASE("ASTSipNodeTest: for range with step node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults forRangeVisitor;
     forRangeNode->accept(&forRangeVisitor);
-    std::string expected[] = {"i","0","10","2","bodyContents","output bodyContents;"};
-    for (int i=0; i < 6; i++) {
+    std::string expected[] = {"i","0","10","2","bodyContents","output bodyContents;","for (i : 0 .. 10 by 2) output bodyContents;"};
+    for (int i=0; i < 7; i++) {
         REQUIRE(forRangeVisitor.resultStrings.at(i) == expected[i]);
     }
 
@@ -184,8 +192,8 @@ TEST_CASE("ASTSipNodeTest: for range without step node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults forRangeVisitor;
     forRangeNode->accept(&forRangeVisitor);
-    std::string expected[] = {"i","0","10","bodyContents","output bodyContents;"};
-    for (int i=0; i < 5; i++) {
+    std::string expected[] = {"i","0","10","bodyContents","output bodyContents;","for (i : 0 .. 10) output bodyContents;"};
+    for (int i=0; i < 6; i++) {
         REQUIRE(forRangeVisitor.resultStrings.at(i) == expected[i]);
     }
 
@@ -224,8 +232,8 @@ TEST_CASE("ASTSipNodeTest: for each node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults forEachVisitor;
     forEachNode->accept(&forEachVisitor);
-    std::string expected[] = {"x","y","bodyContents","output bodyContents;"};
-    for (int i=0; i < 4; i++) {
+    std::string expected[] = {"x","y","bodyContents","output bodyContents;","for (x : y) output bodyContents;"};
+    for (int i=0; i < 5; i++) {
         REQUIRE(forEachVisitor.resultStrings.at(i) == expected[i]);
     }
 
@@ -269,7 +277,7 @@ TEST_CASE("ASTSipNodeTest: array node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults arrVisitor;
     arrNode->accept(&arrVisitor);
-    std::string expected[] = {"x","y","z"};
+    std::string expected[] = {"x","y","z","[x,y,z]"};
     for (int i=0; i < 3; i++) {
         REQUIRE(arrVisitor.resultStrings.at(i) == expected[i]);
     }
@@ -305,8 +313,8 @@ TEST_CASE("ASTSipNodeTest: array of node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults arrOfVisitor;
     arrOfNode->accept(&arrOfVisitor);
-    std::string expected[] = {"x","y"};
-    for (int i=0; i < 2; i++) {
+    std::string expected[] = {"x","y","[x of y]"};
+    for (int i=0; i < 3; i++) {
         REQUIRE(arrOfVisitor.resultStrings.at(i) == expected[i]);
     }
 
@@ -341,8 +349,8 @@ TEST_CASE("ASTSipNodeTest: array elem ref node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults arrElemRefVisitor;
     arrElemRefNode->accept(&arrElemRefVisitor);
-    std::string expected[] = {"x","0"};
-    for (int i=0; i < 2; i++) {
+    std::string expected[] = {"x","0","x[0]"};
+    for (int i=0; i < 3; i++) {
         REQUIRE(arrElemRefVisitor.resultStrings.at(i) == expected[i]);
     }
 
@@ -352,8 +360,8 @@ TEST_CASE("ASTSipNodeTest: array elem ref node", "[ASTSipNode]") {
     REQUIRE(printArrElemRefNode.str() == "x[0]");
 }
 
-TEST_CASE("ASTSipNodeTest: len op node", "[ASTSipNode]") {
-    // make an ASTUnaryExpr node
+TEST_CASE("ASTSipNodeTest: unary len op node", "[ASTSipNode]") {
+    // make an ASTUnaryExpr node for '#'
     std::string op = "#";
     auto right = std::make_shared<ASTVariableExpr>("x");
     auto lenNode = std::make_shared<ASTUnaryExpr>(op, right);
@@ -371,13 +379,43 @@ TEST_CASE("ASTSipNodeTest: len op node", "[ASTSipNode]") {
     // test the accept method
     EndVisitResults lenVisitor;
     lenNode->accept(&lenVisitor);
-    std::string expected[] = {"x"};
-    for (int i=0; i < 1; i++) {
+    std::string expected[] = {"x","#x"};
+    for (int i=0; i < 2; i++) {
         REQUIRE(lenVisitor.resultStrings.at(i) == expected[i]);
     }
 
     // test the print method
     std::stringstream printLenNode;
     printLenNode << *lenNode;
-    REQUIRE(printLenNode.str() == "#[x]");
+    REQUIRE(printLenNode.str() == "#x");
+}
+
+TEST_CASE("ASTSipNodeTest: unary not op node", "[ASTSipNode]") {
+    // make an ASTUnaryExpr node for "not"
+    std::string op = "not";
+    auto right = std::make_shared<ASTVariableExpr>("x");
+    auto notNode = std::make_shared<ASTUnaryExpr>(op, right);
+
+    // test the getter
+    REQUIRE(notNode->getOp() == op);
+    REQUIRE(notNode->getRight() == right.get());
+
+
+    // make sure it has 1 child
+    REQUIRE(notNode->getChildren().size() == 1);
+    REQUIRE(notNode->getChildren().back().get() == right.get());
+
+
+    // test the accept method
+    EndVisitResults notVisitor;
+    notNode->accept(&notVisitor);
+    std::string expected[] = {"x","not x"};
+    for (int i=0; i < 2; i++) {
+        REQUIRE(notVisitor.resultStrings.at(i) == expected[i]);
+    }
+
+    // test the print method
+    std::stringstream printNotNode;
+    printNotNode << *notNode;
+    REQUIRE(printNotNode.str() == "not x");
 }

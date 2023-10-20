@@ -83,4 +83,5 @@ public:
   Any visitArrOfExpr(TIPParser::ArrOfExprContext *ctx) override;
   Any visitArrElemRefExpr(TIPParser::ArrElemRefExprContext *ctx) override;
   Any visitLenExpr(TIPParser::LenExprContext *ctx) override;
+  Any visitNotExpr(TIPParser::NotExprContext *ctx) override;
 };

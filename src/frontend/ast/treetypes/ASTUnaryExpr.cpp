@@ -10,7 +10,7 @@ void ASTUnaryExpr::accept(ASTVisitor *visitor) {
 
 std::ostream &ASTUnaryExpr::print(std::ostream &out) const {
     if (this->getOp() != "not") {
-        out << getOp() << "[" << *getRight() << "]";
+        out << getOp() << *getRight();
     } else {
         out << getOp() << " " << *getRight();
     }

@@ -665,6 +665,11 @@ Any ASTBuilder::visitLenExpr(TIPParser::LenExprContext *ctx) {
     return "";
 } // LCOV_EXCL_LINE
 
+Any ASTBuilder::visitNotExpr(TIPParser::NotExprContext *ctx) {
+    visitUnaryExpr(ctx->KNOT()->getText(), ctx);
+    return "";
+} // LCOV_EXCL_LINE
+
 std::string ASTBuilder::generateSHA256(std::string tohash) {
   std::vector<unsigned char> hash(picosha2::k_digest_size);
   picosha2::hash256(tohash.begin(), tohash.end(), hash.begin(), hash.end());
