@@ -1,10 +1,14 @@
 add_executable(frontend_unit_tests
         SIPASTNodeTest.cpp
         SIPASTNodeTest.cpp
-        treetypes/SIPPrettyPrinterTest.cpp)
+        treetypes/SIPPrettyPrinterTest.cpp
+        SIPASTNodeTest.cpp
+        SIPASTPrinterTest.cpp
+)
 target_sources(
   frontend_unit_tests
-  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/SIPASTNodeTest.cpp
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/SIPASTPrinterTest.cpp
+          ${CMAKE_CURRENT_SOURCE_DIR}/SIPASTNodeTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/TIPParserTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/SIPParserTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/ASTBuilderTest.cpp

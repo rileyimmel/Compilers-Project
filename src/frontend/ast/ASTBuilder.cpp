@@ -556,7 +556,7 @@ Any ASTBuilder::visitForRangeStmt(TIPParser::ForRangeStmtContext *ctx) {
     auto rEnd = visitedExpr;
 
     visit(ctx->statement());
-        auto body = visitedStmt;
+    auto body = visitedStmt;
 
     std::shared_ptr<ASTExpr> step = nullptr;
 
