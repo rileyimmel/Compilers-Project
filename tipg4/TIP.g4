@@ -64,6 +64,36 @@ expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
      | '(' expr ')'				                #parenExpr
 ;
 
+// Below is a grammar rewrite. Maybe this fits C precedence better? Riley wrote on 11/1
+
+//expr : expr '(' (expr (',' expr)*)? ')' 	    #funAppExpr
+//     | expr LSB expr RSB                        #arrElemRefExpr
+//     | expr '.' IDENTIFIER 			            #accessExpr
+//     | KNOT expr                                #notExpr
+//     | '*' expr 				                #deRefExpr
+//     | SUB NUMBER				                #negNumber
+//     | <assoc=right> SUB expr                   #arithmeticNegation
+//     | '&' expr					                #refExpr
+//     | expr op=(MUL | DIV | MOD) expr 		    #multiplicativeExpr
+//     | expr op=(ADD | SUB) expr 		        #additiveExpr
+//     | expr op=(GT | GE | LT | LE) expr 	    #relationalExpr
+//     | expr op=(EQ | NE) expr 			        #equalityExpr
+//     | expr (KAND) expr                         #andExpr
+//     | expr (KOR) expr                          #orExpr
+//     | <assoc=right> expr '?' expr ':' expr     #ternaryExpr
+//     | IDENTIFIER				                #varExpr
+//     | NUMBER					                #numExpr
+//     | KINPUT					                #inputExpr
+//     | KALLOC expr				                #allocExpr
+//     | KNULL					                #nullExpr
+//     | BOOLEAN                                  #boolExpr
+//     | LEN expr                                 #lenExpr
+//     | LSB (expr (',' expr)*)? RSB              #arrExpr
+//     | LSB expr KOF expr RSB                    #arrOfExpr
+//     | recordExpr				                #recordRule
+//     | '(' expr ')'				                #parenExpr
+//;
+
 recordExpr : '{' (fieldExpr (',' fieldExpr)*)? '}' ;
 
 fieldExpr : IDENTIFIER ':' expr ;
