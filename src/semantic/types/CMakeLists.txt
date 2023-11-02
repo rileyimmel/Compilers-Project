@@ -1,4 +1,6 @@
-add_library(types)
+add_library(types
+        concrete/TipBool.h
+        concrete/TipBool.cpp)
 target_sources(
   types
   PRIVATE
