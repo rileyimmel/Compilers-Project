@@ -292,3 +292,13 @@ void TypeConstraintVisitor::endVisit(ASTErrorStmt *element) {
   constraintHandler->handle(astToVar(element->getArg()),
                             std::make_shared<TipInt>());
 }
+
+void TypeConstraintVisitor::endVisit(ASTBoolExpr *element) {}
+void TypeConstraintVisitor::endVisit(ASTTernaryExpr *element) {}
+void TypeConstraintVisitor::endVisit(ASTForRangeStmt *element) {}
+void TypeConstraintVisitor::endVisit(ASTForEachStmt *element) {}
+void TypeConstraintVisitor::endVisit(ASTArrExpr *element) {}
+void TypeConstraintVisitor::endVisit(ASTArrOfExpr *element) {}
+void TypeConstraintVisitor::endVisit(ASTArrElemRefExpr *element) {}
+void TypeConstraintVisitor::endVisit(ASTUnaryExpr *element) {}
+void TypeConstraintVisitor::endVisit(ASTIncDecStmt *element) {}
