@@ -37,6 +37,9 @@ void CheckAssignable::endVisit(ASTAssignStmt *element) {
   if (dynamic_cast<ASTDeRefExpr *>(element->getLHS()))
     return;
 
+  if(dynamic_cast<ASTArrElemRefExpr *>(element->getLHS()))
+      return;
+
   std::ostringstream oss;
   oss << "Assignment error on line " << element->getLine() << ": ";
   if (dynamic_cast<ASTAccessExpr *>(element->getLHS())) {
