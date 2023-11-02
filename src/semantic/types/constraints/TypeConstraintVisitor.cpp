@@ -7,6 +7,8 @@
 #include "TipRef.h"
 #include "TipVar.h"
 
+#include "TipBool.h"
+
 TypeConstraintVisitor::TypeConstraintVisitor(
     SymbolTable *st, std::shared_ptr<ConstraintHandler> handler)
     : symbolTable(st), constraintHandler(std::move(handler)){};
@@ -293,10 +295,53 @@ void TypeConstraintVisitor::endVisit(ASTErrorStmt *element) {
                             std::make_shared<TipInt>());
 }
 
-void TypeConstraintVisitor::endVisit(ASTBoolExpr *element) {}
-void TypeConstraintVisitor::endVisit(ASTTernaryExpr *element) {}
-void TypeConstraintVisitor::endVisit(ASTForRangeStmt *element) {}
-void TypeConstraintVisitor::endVisit(ASTForEachStmt *element) {}
+/* Sip Additions Below */
+
+/*! \brief Type constraints for boolean expression.
+ *
+ * Type rules for "E":
+ *   [[E]] = bool
+ */
+void TypeConstraintVisitor::endVisit(ASTBoolExpr *element) {
+    constraintHandler->handle(astToVar(element), std::make_shared<TipBool>());
+}
+
+/*! \brief Type constraints for ternary expression.
+ *
+ * Type rules for "E1 ? E2 : E3":
+ *   [[E1]] = bool
+ *   [[E2]] = [[E3]]
+ */
+void TypeConstraintVisitor::endVisit(ASTTernaryExpr *element) {
+    constraintHandler->handle(astToVar(element->getCond()), std::make_shared<TipBool>());
+    constraintHandler->handle(astToVar(element->getTrue()), astToVar(element->getFalse()));
+}
+
+/*! \brief Type constraints for for range loop.
+ *
+ *  Type rules for "for (E1 : E2 .. E3 by E4) S":
+ *   [[E1]] = [[E2]] = [[E3]] = [[E4]] = int
+ */
+void TypeConstraintVisitor::endVisit(ASTForRangeStmt *element) {
+    constraintHandler->handle(astToVar(element->getRStart()), std::make_shared<TipInt>());
+    constraintHandler->handle(astToVar(element->getREnd()), std::make_shared<TipInt>());
+    constraintHandler->handle(astToVar(element->getIter()), std::make_shared<TipInt>());
+    if(element->getStep() != nullptr){
+        constraintHandler->handle(astToVar(element->getStep()), std::make_shared<TipInt>());
+    }
+}
+
+/*! \brief Type constraints for for each loop.
+ *
+ *  Type rules for "for (E1 : E2) S":
+ *   [[E1]] = \alpha
+ *   [[E2]] = array of [[E1]]
+ */
+void TypeConstraintVisitor::endVisit(ASTForEachStmt *element) {
+    constraintHandler->handle(astToVar(element->getItem()), std::make_shared<TipAlpha>(element->getItem()));
+//    Need to implement TipArr type
+//    constraintHandler->handle(astToVar(element->getList()), std::make_shared<TipArr>(astToVar(element->getList())));
+}
 void TypeConstraintVisitor::endVisit(ASTArrExpr *element) {}
 void TypeConstraintVisitor::endVisit(ASTArrOfExpr *element) {}
 void TypeConstraintVisitor::endVisit(ASTArrElemRefExpr *element) {}
