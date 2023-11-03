@@ -314,8 +314,10 @@ void TypeConstraintVisitor::endVisit(ASTBoolExpr *element) {
  *   [[E2]] = [[E3]]
  */
 void TypeConstraintVisitor::endVisit(ASTTernaryExpr *element) {
+    auto alpha = std::make_shared<TipAlpha>(element->getTrue());
     constraintHandler->handle(astToVar(element->getCond()), std::make_shared<TipBool>());
-    constraintHandler->handle(astToVar(element->getTrue()), astToVar(element->getFalse()));
+    constraintHandler->handle(astToVar(element->getTrue()), alpha);
+    constraintHandler->handle(astToVar(element->getFalse()), alpha);
 }
 
 /*! \brief Type constraints for for range loop.
@@ -336,7 +338,7 @@ void TypeConstraintVisitor::endVisit(ASTForRangeStmt *element) {
  *
  *  Type rules for "for (E1 : E2) S":
  *   [[E1]] = \alpha
- *   [[E2]] = array of [[E1]]
+ *   [[E2]] = [] [[E1]] = [] \alpha
  */
 void TypeConstraintVisitor::endVisit(ASTForEachStmt *element) {
  /*
@@ -348,30 +350,32 @@ void TypeConstraintVisitor::endVisit(ASTForEachStmt *element) {
 //    constraintHandler->handle(astToVar(element->getItem()), alpha);
 //    constraintHandler->handle(astToVar(element->getList()), array);
 
-    auto alpha = std::make_shared<TipArray>(std::make_shared<TipAlpha>(element->getList()));
+    auto alpha = std::make_shared<TipAlpha>(element->getList());
+    auto arrayOfAlpha = std::make_shared<TipArray>(alpha);
     constraintHandler->handle(astToVar(element->getItem()), alpha);
-    constraintHandler->handle(astToVar(element->getList()), alpha);
+    constraintHandler->handle(astToVar(element->getList()), arrayOfAlpha);
 }
 
 /*! \brief Type constraints for an array.
  *
  * Type Rules for "[E1, ..., En]":
  *   [[E1]] = \alpha
- *   [[E2]], ..., [[En]] = [[E1]]
- *   [[[E1, ..., En]]] = [[E1]]
+ *   [[E2]], ..., [[En]] = [[E1]] = \alpha
+ *   [[[E1, ..., En]]] = [] [[E1]] = [] \alpha
  *
  *   To clarify: E1 has type alpha, E2 through En must have same type as E1 (alpha). The overall type of the entire
- *   array ([[[E1, ..., En]]]) will be the same type as E1 (alpha).
+ *   array ([[[E1, ..., En]]]) will be [] [[E1]] which is same as [] \alpha
  */
 void TypeConstraintVisitor::endVisit(ASTArrExpr *element) {
     auto elements = element->getElements();
     int size = int(element->getChildren().size());
     if (size != 0){
         auto first = elements.front();
-        auto alpha = std::make_shared<TipArray>(astToVar(first));
-        constraintHandler->handle(astToVar(element), alpha);
+        auto type = astToVar(first);
+        auto arrayOfType = std::make_shared<TipArray>(astToVar(first));
+        constraintHandler->handle(astToVar(element), arrayOfType);
         for (auto &elem : elements){
-            constraintHandler->handle(astToVar(first), astToVar(elem));
+            constraintHandler->handle(type, astToVar(elem));
         }
     } else {
         auto alpha = std::make_shared<TipArray>(std::make_shared<TipAlpha>(element));
@@ -384,11 +388,12 @@ void TypeConstraintVisitor::endVisit(ASTArrExpr *element) {
  * Type Rules for "[E1 of E2]":
  *   [[E1]] = int
  *   [[E2]] = \alpha
- *   [[[E1 of E2]]] = [[E2]] = \alpha
+ *   [[[E1 of E2]]] = [] [[E2]] = [] \alpha
  */
 void TypeConstraintVisitor::endVisit(ASTArrOfExpr *element) {
-    auto alpha = std::make_shared<TipArray>(std::make_shared<TipAlpha>(element->getRight()));
-    constraintHandler->handle(astToVar(element), alpha);
+    auto alpha = std::make_shared<TipAlpha>(element->getRight());
+    auto arrayOfAlpha = std::make_shared<TipArray>(alpha);
+    constraintHandler->handle(astToVar(element), arrayOfAlpha);
     constraintHandler->handle(astToVar(element->getLeft()), std::make_shared<TipInt>());
     constraintHandler->handle(astToVar(element->getRight()), alpha);
 }
@@ -396,14 +401,14 @@ void TypeConstraintVisitor::endVisit(ASTArrOfExpr *element) {
 /*! \brief Type constraints for array element reference.
  *
  * Type Rules for "E1[E2]":
- *   [[E1]] = array of [[E1]]
+ *   [[E1]] = [] [[\alpha]]
  *   [[E2]] = int
- *   [[E1[E2]]] = [[E1]]
+ *   [[E1[E2]]] = [[\alpha]]
  */
 void TypeConstraintVisitor::endVisit(ASTArrElemRefExpr *element) {
-    auto arrayType = std::make_shared<TipArray>(std::make_shared<TipAlpha>(element));
+    auto arrayType = std::make_shared<TipAlpha>(element);
     constraintHandler->handle(astToVar(element), arrayType);
-    constraintHandler->handle(astToVar(element->getPtr()), arrayType);
+    constraintHandler->handle(astToVar(element->getPtr()), std::make_shared<TipArray>(arrayType));
     constraintHandler->handle(astToVar(element->getIndex()), std::make_shared<TipInt>());
 }
 
