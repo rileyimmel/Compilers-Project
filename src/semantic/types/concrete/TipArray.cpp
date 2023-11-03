@@ -6,16 +6,8 @@
 TipArray::TipArray(std::shared_ptr<TipType> type):
     TipCons(std::vector<std::shared_ptr<TipType>>(1, type)) {}
 
-//might be wrong
 std::ostream &TipArray::print(std::ostream &out) const {
-    out << "[";
-    for (auto &init : arguments) {
-        out << *init;
-        if(init != arguments.back()){
-            out << ",";
-        }
-    }
-    out << "]";
+    out << "[] " << *arguments.front();
     return out;
 }
 
