@@ -19,3 +19,4 @@
 #include "TipVar.h"
 
 #include "TipBool.h"
+#include "TipArray.h"
