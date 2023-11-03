@@ -1,7 +1,3 @@
-//
-// Created by etc3xg on 11/3/23.
-//
-
 #include "TipBool.h"
 #include "TipVar.h"
 
