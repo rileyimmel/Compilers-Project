@@ -1,4 +1,8 @@
-add_library(types)
+add_library(types
+        concrete/TipBool.h
+        concrete/TipBool.cpp
+        concrete/TipArray.h
+        concrete/TipArray.cpp)
 target_sources(
   types
   PRIVATE
@@ -70,3 +74,4 @@ target_include_directories(
           ${CMAKE_CURRENT_SOURCE_DIR}/constraints
           ${CMAKE_CURRENT_SOURCE_DIR}/solver)
 target_link_libraries(types PRIVATE coverage_config loguru)
+target_link_libraries(types PRIVATE ast coverage_config loguru)

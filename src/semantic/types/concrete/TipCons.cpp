@@ -18,8 +18,12 @@ template <typename T> bool sameType(const TipType *x, const TipType *y) {
  */
 bool TipCons::doMatch(TipType const *t) const {
   // Check if they are both the same TipType subtype
-  if (sameType<TipFunction>(t, this) || sameType<TipInt>(t, this) ||
-      sameType<TipRecord>(t, this) || sameType<TipRef>(t, this)) {
+  if (sameType<TipFunction>(t, this)
+      || sameType<TipInt>(t, this)
+      || sameType<TipRecord>(t, this)
+      || sameType<TipRef>(t, this)
+      || sameType<TipBool>(t, this)
+      || sameType<TipArray>(t, this)) {
     auto tipCons = dynamic_cast<TipCons const *>(t);
     return tipCons->arity() == arity();
   }

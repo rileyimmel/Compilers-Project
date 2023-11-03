@@ -15,7 +15,7 @@
  *
  * This visitor performs a post-order visit of the program AST.  It
  * constructs type constraints for each node that requires a type judgement.
- * The constraints are then processed by a concrete implemntation of
+ * The constraints are then processed by a concrete implementation of
  * A ConstraintHandler. This provides flexibility in using the visitor - it
  * can simply record the constraints or it can solve them on the fly.
  */
@@ -55,6 +55,17 @@ public:
   void endVisit(ASTRecordExpr *element) override;
   void endVisit(ASTRefExpr *element) override;
   void endVisit(ASTWhileStmt *element) override;
+
+  void endVisit(ASTBoolExpr *element) override;
+  void endVisit(ASTTernaryExpr *element) override;
+  void endVisit(ASTForRangeStmt *element) override;
+  void endVisit(ASTForEachStmt *element) override;
+  void endVisit(ASTArrExpr *element) override;
+  void endVisit(ASTArrOfExpr *element) override;
+  void endVisit(ASTArrElemRefExpr *element) override;
+  void endVisit(ASTUnaryExpr *element) override;
+  void endVisit(ASTIncDecStmt *element) override;
+
 
 protected:
   std::shared_ptr<ConstraintHandler> constraintHandler;
