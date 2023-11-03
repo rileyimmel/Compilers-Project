@@ -149,14 +149,6 @@ TEST_CASE("SIP Semantic: Collect and then unify constraints", "[Unifier, Collect
     auto vType = std::make_shared<TipVar>(symbols->getLocal("v", fDecl));
     REQUIRE(*unifier.inferred(vType) == *boolType);
 
-    auto nType = std::make_shared<TipVar>(symbols->getLocal("n", fDecl));
-    auto alphaN = std::make_shared<TipArray>(std::make_shared<TipAlpha>(symbols->getLocal("n", fDecl)));
-//    std::cout << "alphaNType " << *alphaN << "\n";
-//    std::cout << "gType " << *unifier.inferred(gType) << "\n";
-//    std::cout << "nType " << *unifier.inferred(nType) << "\n";
-
-//    REQUIRE(std::dynamic_pointer_cast<TipAlpha>(nType));
-
     }
 
     SECTION("SIP Test unification error 1") {
