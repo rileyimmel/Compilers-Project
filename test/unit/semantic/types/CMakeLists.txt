@@ -1,6 +1,7 @@
 add_executable(typeinference_unit_tests
                constraints/PolyTypeConstraintCollectTest.cpp
         concrete/TipBoolTest.cpp
+        concrete/TipArrayTest.cpp)
 target_sources(
   typeinference_unit_tests
   PRIVATE

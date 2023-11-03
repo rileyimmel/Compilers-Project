@@ -1,14 +1,14 @@
 add_subdirectory(types)
 add_subdirectory(cfa)
 
-add_executable(semantic_unit_tests
-        SIPSemanticTests.cpp)
+add_executable(semantic_unit_tests)
 target_sources(
   semantic_unit_tests
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/SymbolTableTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/LocalNameCollectorTest.cpp
           ${CMAKE_CURRENT_SOURCE_DIR}/CheckAssignableTest.cpp
-          ${CMAKE_CURRENT_SOURCE_DIR}/SIPCheckAssignableTest.cpp)
+          ${CMAKE_CURRENT_SOURCE_DIR}/SIPCheckAssignableTest.cpp
+          ${CMAKE_CURRENT_SOURCE_DIR}/SIPSemanticTests.cpp)
 target_include_directories(
   semantic_unit_tests
   PRIVATE ${CMAKE_SOURCE_DIR}/src/error
