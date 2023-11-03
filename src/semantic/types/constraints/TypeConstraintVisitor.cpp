@@ -378,8 +378,8 @@ void TypeConstraintVisitor::endVisit(ASTArrExpr *element) {
             constraintHandler->handle(type, astToVar(elem));
         }
     } else {
-        auto alpha = std::make_shared<TipArray>(std::make_shared<TipAlpha>(element));
-        constraintHandler->handle(astToVar(element), alpha);
+        auto alpha = std::make_shared<TipAlpha>(element);
+        constraintHandler->handle(astToVar(element), std::make_shared<TipArray>(alpha));
     }
 }
 

@@ -1,7 +1,8 @@
 add_subdirectory(types)
 add_subdirectory(cfa)
 
-add_executable(semantic_unit_tests)
+add_executable(semantic_unit_tests
+        SIPSemanticTests.cpp)
 target_sources(
   semantic_unit_tests
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/SymbolTableTest.cpp
