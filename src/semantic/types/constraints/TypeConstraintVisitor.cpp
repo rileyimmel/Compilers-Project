@@ -102,9 +102,18 @@ void TypeConstraintVisitor::endVisit(ASTNumberExpr *element) {
 void TypeConstraintVisitor::endVisit(ASTBinaryExpr *element) {
   auto op = element->getOp();
   auto intType = std::make_shared<TipInt>();
+  auto boolType = std::make_shared<TipBool>();
 
   // result type is integer
-  constraintHandler->handle(astToVar(element), intType);
+  if(op == ">" || op == ">=" || op == "<" || op == "<=" || op == "==" || op == "!=")
+  {
+      constraintHandler->handle(astToVar(element), boolType);
+  }
+  else
+  {
+      constraintHandler->handle(astToVar(element), intType);
+  }
+
 
   if (op != "==" && op != "!=") {
     // operands are integer
