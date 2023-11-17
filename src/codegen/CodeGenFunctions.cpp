@@ -1146,9 +1146,32 @@ llvm::Value *ASTBoolExpr::codegen() {
     }
 } // LCOV_EXCL_LINE
 
+/*
+ *
+ * x = E1 ? E2 : E3
+ *
+ */
+
 llvm::Value *ASTTernaryExpr::codegen() {
-		return nullptr;
-}
+  LOG_S(1) << "Generating code for " << *this;
+
+  Value *CondV = getCond()->codegen();
+  if (CondV == nullptr) {
+    throw InternalError("failed to generate bitcode for the condition of the ternary");
+  }
+
+  // Convert condition to a bool by comparing non-equal to 0.
+  CondV = Builder.CreateICmpNE(CondV, ConstantInt::get(CondV->getType(), 0), "ternaryCond");
+  if (CondV) {
+    auto trueResult = getTrue()->codegen();
+    auto falseResult = getFalse()->codegen();
+
+    if (!trueResult || !falseResult) {
+      throw InternalError("failed to generate bitcode for true or false of the ternary");
+    }
+    return Builder.CreateSelect(CondV, trueResult, falseResult, "ternaryResult");
+  }
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTForRangeStmt::codegen() {
     return nullptr;
@@ -1202,11 +1225,10 @@ llvm::Value *ASTIncDecStmt::codegen() {
         v = Builder.CreateAdd(L, oneV, "inctmp");
     } else if(op == "--") {
         v = Builder.CreateSub(L, oneV, "dectmp");
-
     } else {
         throw InternalError("Invalid IncDec operator: " + op);
     }
 
     Builder.CreateStore(v, L);
     return v;
-}
+} // LCOV_EXCL_LINE
