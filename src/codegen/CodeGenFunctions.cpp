@@ -1174,6 +1174,90 @@ llvm::Value *ASTTernaryExpr::codegen() {
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTForRangeStmt::codegen() {
+  LOG_S(1) << "Generating code for " << *this;
+
+  llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
+
+  /*
+   * Create blocks for the loop header, body, and exit; HeaderBB is first
+   * so it is added to the function in the constructor.
+   *
+   * Blocks don't need to be contiguous or ordered in
+   * any particular way because we will explicitly branch between them.
+   * This can be optimized by later passes.
+   */
+  labelNum++; // create shared labels for these BBs
+
+  BasicBlock *HeaderBB = BasicBlock::Create(
+          TheContext, "header" + std::to_string(labelNum), TheFunction);
+  BasicBlock *BodyBB =
+          BasicBlock::Create(TheContext, "body" + std::to_string(labelNum));
+  BasicBlock *ExitBB =
+          BasicBlock::Create(TheContext, "exit" + std::to_string(labelNum));
+
+  lValueGen = true;
+  Value *Iter = getIter()->codegen();
+  lValueGen = false;
+  if (Iter == nullptr) {
+    throw InternalError("failed to generate bitcode for the iterator"); // LCOV_EXCL_LINE
+  }
+
+  Value *RStart = getRStart()->codegen();
+  if (RStart == nullptr) {
+    throw InternalError("failed to generate bitcode for the start"); // LCOV_EXCL_LINE
+  }
+  Builder.CreateStore(RStart, Iter);
+
+  Value *REnd = getREnd()->codegen();
+  if (REnd == nullptr) {
+    throw InternalError("failed to generate bitcode for the end"); // LCOV_EXCL_LINE
+  }
+
+  Value *Step;
+  if(getStep() != nullptr){
+    Step = getStep()->codegen();
+  } else {
+    Step = oneV;
+  }
+
+//  Needed?
+//  if (Builder.CreateICmpSLT(REnd, RStart, "checkEndVsStart")){
+//    std::ostringstream errorMessage;
+//    errorMessage << REnd << " is smaller than " << RStart;
+//    throw InternalError(errorMessage.str()); // LCOV_EXCL_LINE
+//  }
+
+  // Add an explicit branch from the current BB to the header
+  Builder.CreateBr(HeaderBB);
+
+  // Emit loop header
+  {
+    Builder.SetInsertPoint(HeaderBB);
+
+    // Convert condition to a bool by comparing non-equal to 0.
+    Value *CondV = Builder.CreateICmpSLT(RStart, REnd, "loopCond");
+    Builder.CreateCondBr(CondV, BodyBB, ExitBB);
+  }
+
+  // Emit loop body
+  {
+    TheFunction->getBasicBlockList().push_back(BodyBB);
+    Builder.SetInsertPoint(BodyBB);
+
+    Value *BodyV = getBody()->codegen();
+    if (BodyV == nullptr) {
+      throw InternalError(                                 // LCOV_EXCL_LINE
+              "failed to generate bitcode for the loop body"); // LCOV_EXCL_LINE
+    }
+    Builder.CreateStore(Builder.CreateAdd(RStart, Step, "newStep"), Step);
+    Builder.CreateBr(HeaderBB);
+  }
+
+  // Emit loop exit block.
+  TheFunction->getBasicBlockList().push_back(ExitBB);
+  Builder.SetInsertPoint(ExitBB);
+  return Builder.CreateCall(nop);
+
     return nullptr;
 } // LCOV_EXCL_LINE
 
@@ -1183,7 +1267,7 @@ llvm::Value *ASTForEachStmt::codegen() {
 
 llvm::Value *ASTArrExpr::codegen() {
   LOG_S(1) << "Generating code for " << *this;
-
+//
   auto elements = getElements();
   int size = int(elements.size());
 
@@ -1209,7 +1293,30 @@ llvm::Value *ASTArrExpr::codegen() {
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrOfExpr::codegen() {
-    return nullptr;
+  LOG_S(1) << "Generating code for " << *this;
+
+//  auto copiesAmount = getLeft()->codegen();
+//  auto item = getRight()->codegen();
+//
+//  Value *elemSize = Builder.CreateAdd(copiesAmount, oneV, "arrayLen");
+//
+//
+//  std::vector<Value *> args;
+//  auto arg = ConstantInt::get(Type::getInt64Ty(TheContext), 8);
+//  args.push_back(elemSize);
+//  args.push_back(arg);
+//  auto *calloc = Builder.CreateCall(callocFun, args, "callocPtr");
+//  auto *ptr = Builder.CreatePointerCast(calloc, Type::getInt64PtrTy(TheContext), "ptr");
+//  Builder.CreateStore(elemSize, ptr);
+//
+//  for (int i = 0; i < size; i++){
+//    Value *element = elements.at(i)->codegen();
+//    Value *count = ConstantInt::get(Type::getInt64Ty(TheContext), i+1);
+//    Value *elemPtr = Builder.CreateGEP(Type::getInt64Ty(TheContext), ptr, std::vector<Value *>{count});
+//    Builder.CreateStore(element, elemPtr);
+//  }
+
+  return Builder.CreateCall(nop);
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrElemRefExpr::codegen() {
