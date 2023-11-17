@@ -1169,7 +1169,11 @@ llvm::Value *ASTUnaryExpr::codegen() {
     }
     auto op = getOp();
     if (op == "not") {
-        return Builder.CreateNot(R, "logNot");
+        if (Builder.CreateICmpNE(R, zeroV, "logNotCheck")){
+          return zeroV;
+        } else {
+          return oneV;
+        }
     } else if (op == "-") {
         return Builder.CreateNeg(R, "arithNeg");
     } else if (op == "#") {
