@@ -1135,23 +1135,16 @@ llvm::Value *ASTReturnStmt::codegen() {
 
 llvm::Value *ASTBoolExpr::codegen() {
     LOG_S(1) << "Generating code for " << *this;
+
     std::string val = getValue();
-    if(val == "true")
-    {
+    if (val == "true") {
         return oneV;
-    }
-    else if(val == "false")
-    {
+    } else if(val == "false") {
         return zeroV;
+    } else {
+        throw InternalError("BoolExpr doesn't resolve to true or false");
     }
-    else
-    {
-        throw InternalError(
-                "BoolExpr doesn't resolve to true or false");
-    }
-
-
-}
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTTernaryExpr::codegen() {
 		return nullptr;
@@ -1178,8 +1171,27 @@ llvm::Value *ASTArrElemRefExpr::codegen() {
 }
 
 llvm::Value *ASTUnaryExpr::codegen() {
-    return nullptr;
-}
+    LOG_S(1) << "Generating code for " << *this;
+
+    Value *R = getRight()->codegen();
+    if (R == nullptr){
+      throw InternalError("null unary operand");
+    }
+    auto op = getOp();
+    if (op == "not") {
+        if (Builder.CreateICmpNE(R, zeroV, "logNotCheck")){
+          return zeroV;
+        } else {
+          return oneV;
+        }
+    } else if (op == "-") {
+        return Builder.CreateNeg(R, "arithNeg");
+    } else if (op == "#") {
+      // TODO: Once arrays implemented
+    } else {
+      throw InternalError("Invalid unary operator: " + OP);
+    }
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTIncDecStmt::codegen() {
   return nullptr;
