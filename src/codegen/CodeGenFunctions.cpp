@@ -1162,18 +1162,18 @@ llvm::Value *ASTTernaryExpr::codegen() {
   if (CondV == nullptr) {
     throw InternalError("failed to generate bitcode for the condition of the ternary");
   }
-
-  // Convert condition to a bool by comparing non-equal to 0.
   CondV = Builder.CreateICmpNE(CondV, ConstantInt::get(CondV->getType(), 0), "ternaryCond");
-  if (CondV) {
-    auto trueResult = getTrue()->codegen();
-    auto falseResult = getFalse()->codegen();
 
-    if (!trueResult || !falseResult) {
-      throw InternalError("failed to generate bitcode for true or false of the ternary");
-    }
-    return Builder.CreateSelect(CondV, trueResult, falseResult, "ternaryResult");
+  Value *TrueVal = getTrue()->codegen();
+  if (!TrueVal) {
+    throw InternalError("failed to generate bitcode for the true part of the ternary");
   }
+  Value *FalseVal = getFalse()->codegen();
+  if (!FalseVal) {
+    throw InternalError("failed to generate bitcode for the false part of the ternary");
+  }
+
+  return Builder.CreateSelect(CondV, TrueVal, FalseVal, "ternaryResult");
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTForRangeStmt::codegen() {
@@ -1477,9 +1477,49 @@ llvm::Value *ASTArrOfExpr::codegen() {
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrElemRefExpr::codegen() {
-  
+    LOG_S(1) << "Generating code for " << *this;
 
+    Value *ptr = getPtr()->codegen();
+    Value *index = getIndex()->codegen();
 
+    llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
+
+    BasicBlock *UnderflowBB = BasicBlock::Create(TheContext, "underflow", TheFunction);
+    BasicBlock *OverflowBB = BasicBlock::Create(TheContext, "overflow");
+    BasicBlock *BoundsCheckSuccessBB = BasicBlock::Create(TheContext, "boundsCheckSuccess");
+
+    // need to check bounds though
+
+    Value *storedLenGEP = Builder.CreateGEP(Type::getInt64Ty(TheContext), ptr, zeroV);
+    Value *storedLen = lValueGen ? storedLenGEP : Builder.CreateLoad(ptr->getType()->getPointerElementType(), storedLenGEP);
+
+    Value *lowerBoundsCheck = Builder.CreateICmpSLT(index, storedLen, "underflow");
+    Builder.CreateCondBr(lowerBoundsCheck, UnderflowBB, OverflowBB);
+
+    Builder.SetInsertPoint(OverflowBB);
+    Value *upperBoundsCheck = Builder.CreateICmpSGE(index, storedLen, "overflowCheck");
+    Builder.CreateCondBr(upperBoundsCheck, OverflowBB, BoundsCheckSuccessBB);
+
+    {
+      Builder.SetInsertPoint(UnderflowBB);
+      std::ostringstream msg;
+      msg << "index " << index << " out of bounds, underflow";
+      throw InternalError(msg.str());
+    }
+
+    {
+      Builder.SetInsertPoint(OverflowBB);
+      std::ostringstream msg;
+      msg << "index " << index << " out of bounds, overflow";
+      throw InternalError(msg.str());
+    }
+
+    TheFunction->getBasicBlockList().push_back(BoundsCheckSuccessBB);
+    {
+      Builder.SetInsertPoint(BoundsCheckSuccessBB);
+      Value *GEP = Builder.CreateGEP(Type::getInt64Ty(TheContext), ptr, index);
+      return lValueGen ? GEP : Builder.CreateLoad(ptr->getType()->getPointerElementType(), GEP);
+    }
     return nullptr;
 } // LCOV_EXCL_LINE
 
