@@ -1175,23 +1175,46 @@ llvm::Value *ASTTernaryExpr::codegen() {
 
 llvm::Value *ASTForRangeStmt::codegen() {
     return nullptr;
-}
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTForEachStmt::codegen() {
     return nullptr;
-}
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrExpr::codegen() {
-    return nullptr;
-}
+  LOG_S(1) << "Generating code for " << *this;
+
+  auto elements = getElements();
+  int size = int(elements.size());
+
+  Value *arrayLen = ConstantInt::get(Type::getInt64Ty(TheContext), size);
+
+  std::vector<Value *> args;
+  auto first = ConstantInt::get(Type::getInt64Ty(TheContext), size+1);
+  auto second = ConstantInt::get(Type::getInt64Ty(TheContext), 8);
+  args.push_back(first);
+  args.push_back(second);
+  auto *calloc = Builder.CreateCall(callocFun, args, "callocPtr");
+  auto *ptr = Builder.CreatePointerCast(calloc, Type::getInt64PtrTy(TheContext), "ptr");
+  Builder.CreateStore(arrayLen, ptr);
+
+  for (int i = 0; i < size; i++){
+    Value *element = elements.at(i)->codegen();
+    Value *count = ConstantInt::get(Type::getInt64Ty(TheContext), i+1);
+    Value *elemPtr = Builder.CreateGEP(Type::getInt64Ty(TheContext), ptr, std::vector<Value *>{count});
+    Builder.CreateStore(element, elemPtr);
+  }
+
+  return Builder.CreateCall(nop);
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrOfExpr::codegen() {
     return nullptr;
-}
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrElemRefExpr::codegen() {
     return nullptr;
-}
+} // LCOV_EXCL_LINE
 
 llvm::Value *ASTUnaryExpr::codegen() {
     LOG_S(1) << "Generating code for " << *this;
