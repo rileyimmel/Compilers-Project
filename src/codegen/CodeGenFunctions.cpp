@@ -1194,5 +1194,19 @@ llvm::Value *ASTUnaryExpr::codegen() {
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTIncDecStmt::codegen() {
-  return nullptr;
+    LOG_S(1) << "Generating code for " << *this;
+    Value *L = getLeft()->codegen();
+    Value* v = nullptr;
+    std::string op = getOp();
+    if(op == "++") {
+        v = Builder.CreateAdd(L, oneV, "inctmp");
+    } else if(op == "--") {
+        v = Builder.CreateSub(L, oneV, "dectmp");
+
+    } else {
+        throw InternalError("Invalid IncDec operator: " + op);
+    }
+
+    Builder.CreateStore(v, L);
+    return v;
 }
