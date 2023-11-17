@@ -1134,7 +1134,7 @@ llvm::Value *ASTReturnStmt::codegen() {
 } // LCOV_EXCL_LINE
 
 
-/*  <----- SIP Extensions Below -----> */
+/*  <-------------------------- SIP Extensions Below --------------------------> */
 
 llvm::Value *ASTBoolExpr::codegen() {
     LOG_S(1) << "Generating code for " << *this;
@@ -1385,6 +1385,75 @@ llvm::Value *ASTArrExpr::codegen() {
 llvm::Value *ASTArrOfExpr::codegen() {
   LOG_S(1) << "Generating code for " << *this;
 
+  Value *Amount = getLeft()->codegen();
+  Value *Type = getRight()->codegen();
+  Value *ArrayLength = Builder.CreateAdd(Amount, oneV, "totalLength");
+
+  auto *count = Builder.CreateAlloca(Type::getInt64Ty(TheContext), 0, "ArrOfCount");
+
+  std::vector<Value *> args;
+  auto second = ConstantInt::get(Type::getInt64Ty(TheContext), 8);
+  args.push_back(Type);
+  args.push_back(second);
+
+  auto *calloc = Builder.CreateCall(callocFun, args, "callocPtr");
+  auto *ptr = Builder.CreatePointerCast(calloc, Type::getInt64PtrTy(TheContext), "ptr");
+
+  Builder.CreateStore(Amount, ptr);
+
+  Value *loadCount = Builder.CreateLoad(count->getAllocatedType(), count, "loadCount");
+  Builder.CreateStore(Builder.CreateAdd(loadCount, oneV, "arrLen"), count);
+
+  llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
+
+  /*
+   * Create blocks for the loop header, body, and exit; HeaderBB is first
+   * so it is added to the function in the constructor.
+   *
+   * Blocks don't need to be contiguous or ordered in
+   * any particular way because we will explicitly branch between them.
+   * This can be optimized by later passes.
+   */
+  labelNum++; // create unique labels for these BBs
+
+  BasicBlock *HeaderBB = BasicBlock::Create(
+          TheContext, "header" + std::to_string(labelNum), TheFunction);
+  BasicBlock *BodyBB =
+          BasicBlock::Create(TheContext, "body" + std::to_string(labelNum));
+  BasicBlock *ExitBB =
+          BasicBlock::Create(TheContext, "exit" + std::to_string(labelNum));
+
+  // Add an explicit branch from the current BB to the header
+  Builder.CreateBr(HeaderBB);
+
+  // Emit loop header
+  {
+    Builder.SetInsertPoint(HeaderBB);
+
+    loadCount = Builder.CreateLoad(count->getAllocatedType(), count, "loadCount");
+    Value *CondV = Builder.CreateICmpSLT(loadCount, Type, "loopCond");
+
+    Builder.CreateCondBr(CondV, BodyBB, ExitBB);
+  }
+
+  // Emit loop body
+  {
+    TheFunction->getBasicBlockList().push_back(BodyBB);
+    Builder.SetInsertPoint(BodyBB);
+
+    loadCount = Builder.CreateLoad(count->getAllocatedType(), count, "loadCount");
+
+    Value *GEP = Builder.CreateGEP(Type::getInt64Ty(TheContext), ptr, std::vector<Value *>{loadCount});
+    Builder.CreateStore(Type, GEP);
+
+    Builder.CreateStore(Builder.CreateAdd(loadCount, oneV, "arrLen"), count);
+    Builder.CreateBr(HeaderBB);
+  }
+
+  // Emit loop exit block.
+  TheFunction->getBasicBlockList().push_back(ExitBB);
+  Builder.SetInsertPoint(ExitBB);
+  return Builder.CreateCall(nop);
 //  auto copiesAmount = getLeft()->codegen();
 //  auto item = getRight()->codegen();
 //
@@ -1405,11 +1474,12 @@ llvm::Value *ASTArrOfExpr::codegen() {
 //    Value *elemPtr = Builder.CreateGEP(Type::getInt64Ty(TheContext), ptr, std::vector<Value *>{count});
 //    Builder.CreateStore(element, elemPtr);
 //  }
-
-  return Builder.CreateCall(nop);
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrElemRefExpr::codegen() {
+  
+
+
     return nullptr;
 } // LCOV_EXCL_LINE
 
