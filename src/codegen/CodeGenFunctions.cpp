@@ -495,9 +495,15 @@ llvm::Value *ASTBinaryExpr::codegen() {
   } else if (getOp() == "%") {
     return Builder.CreateSRem(L, R, "modtmp");
   } else if (getOp() == "and") {
-      return Builder.CreateAnd(L, R, "andtmp");
+      auto v = Builder.CreateAnd(L, R, "ortmp");
+      auto *cmp = Builder.CreateICmpSGT(v, zeroV, "_gttmp");
+      return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
+                                   false, "gttmp");
   } else if (getOp() == "or") {
-      return Builder.CreateOr(L, R, "ortmp");
+      auto v = Builder.CreateOr(L, R, "ortmp");
+      auto *cmp = Builder.CreateICmpSGT(v, zeroV, "_gttmp");
+      return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
+                                           false, "gttmp");
   } else if (getOp() == ">") {
     auto *cmp = Builder.CreateICmpSGT(L, R, "_gttmp");
     return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
