@@ -494,6 +494,10 @@ llvm::Value *ASTBinaryExpr::codegen() {
     return Builder.CreateSDiv(L, R, "divtmp");
   } else if (getOp() == "%") {
     return Builder.CreateSRem(L, R, "modtmp");
+  } else if (getOp() == "and") {
+      return Builder.CreateAnd(L, R, "andtmp");
+  } else if (getOp() == "or") {
+      return Builder.CreateOr(L, R, "ortmp");
   } else if (getOp() == ">") {
     auto *cmp = Builder.CreateICmpSGT(L, R, "_gttmp");
     return Builder.CreateIntCast(cmp, IntegerType::getInt64Ty(TheContext),
