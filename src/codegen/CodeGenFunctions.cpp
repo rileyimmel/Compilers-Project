@@ -1133,6 +1133,9 @@ llvm::Value *ASTReturnStmt::codegen() {
   return Builder.CreateRet(argVal);
 } // LCOV_EXCL_LINE
 
+
+/*  <----- SIP Extensions Below -----> */
+
 llvm::Value *ASTBoolExpr::codegen() {
     LOG_S(1) << "Generating code for " << *this;
 
@@ -1234,7 +1237,7 @@ llvm::Value *ASTForRangeStmt::codegen() {
   {
     Builder.SetInsertPoint(HeaderBB);
 
-    // Convert condition to a bool by comparing non-equal to 0.
+    // Convert condition to a bool by comparing start to end.
     Value *CondV = Builder.CreateICmpSLT(RStart, REnd, "loopCond");
     Builder.CreateCondBr(CondV, BodyBB, ExitBB);
   }
@@ -1262,7 +1265,94 @@ llvm::Value *ASTForRangeStmt::codegen() {
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTForEachStmt::codegen() {
-    return nullptr;
+  LOG_S(1) << "Generating code for " << *this;
+
+  llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
+
+  /*
+   * Create blocks for the loop header, body, and exit; HeaderBB is first
+   * so it is added to the function in the constructor.
+   *
+   * Blocks don't need to be contiguous or ordered in
+   * any particular way because we will explicitly branch between them.
+   * This can be optimized by later passes.
+   */
+  labelNum++; // create shared labels for these BBs
+
+  BasicBlock *HeaderBB = BasicBlock::Create(
+          TheContext, "header" + std::to_string(labelNum), TheFunction);
+  BasicBlock *BodyBB =
+          BasicBlock::Create(TheContext, "body" + std::to_string(labelNum));
+  BasicBlock *ExitBB =
+          BasicBlock::Create(TheContext, "exit" + std::to_string(labelNum));
+
+  // item, list, body
+
+  lValueGen = true;
+  Value *Item = getItem()->codegen();
+  lValueGen = false;
+  if (Item == nullptr) {
+    throw InternalError("failed to generate bitcode for the item"); // LCOV_EXCL_LINE
+  }
+
+  Value *List = getList()->codegen();
+  if (List == nullptr) {
+    throw InternalError("failed to generate bitcode for the list"); // LCOV_EXCL_LINE
+  }
+
+  Value *GEP = Builder.CreateGEP(Type::getInt64Ty(TheContext), List, zeroV);
+  Value *listLength = nullptr;
+
+  if (lValueGen) {
+    listLength = GEP;
+  } else {
+    listLength = Builder.CreateLoad(List->getType()->getPointerElementType(), GEP);
+  }
+
+  Value *Index = zeroV;
+  Value *Step = oneV;
+
+  // Add an explicit branch from the current BB to the header
+  Builder.CreateBr(HeaderBB);
+
+  // Emit loop header
+  {
+    Builder.SetInsertPoint(HeaderBB);
+
+    // Convert condition to a bool by comparing current index to length
+    Value *CondV = Builder.CreateICmpSLT(Index, listLength, "loopCond");
+    Builder.CreateCondBr(CondV, BodyBB, ExitBB);
+  }
+
+  // Emit loop body
+  {
+    TheFunction->getBasicBlockList().push_back(BodyBB);
+    Builder.SetInsertPoint(BodyBB);
+
+    Value *indexedGEP = Builder.CreateGEP(Type::getInt64Ty(TheContext), List, Index);
+    Value *element = nullptr;
+    if (lValueGen) {
+      element = indexedGEP;
+    } else {
+      element = Builder.CreateLoad(List->getType()->getPointerElementType(), listLength);
+    }
+    Builder.CreateStore(listLength, Item);
+
+    Value *BodyV = getBody()->codegen();
+    if (BodyV == nullptr) {
+      throw InternalError(                                 // LCOV_EXCL_LINE
+              "failed to generate bitcode for the loop body"); // LCOV_EXCL_LINE
+    }
+    Builder.CreateStore(Builder.CreateAdd(Index, Step, "newStep"), Step);
+    Builder.CreateBr(HeaderBB);
+  }
+
+  // Emit loop exit block.
+  TheFunction->getBasicBlockList().push_back(ExitBB);
+  Builder.SetInsertPoint(ExitBB);
+  return Builder.CreateCall(nop);
+
+  return nullptr;
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTArrExpr::codegen() {
@@ -1340,7 +1430,12 @@ llvm::Value *ASTUnaryExpr::codegen() {
     } else if (op == "-") {
         return Builder.CreateNeg(R, "arithNeg");
     } else if (op == "#") {
-      // TODO: Once arrays implemented
+      Value *GEP = Builder.CreateGEP(Type::getInt64Ty(TheContext), R, zeroV);
+      if(lValueGen){
+        return GEP;
+      } else {
+        return Builder.CreateLoad(R->getType()->getPointerElementType(), GEP);
+      }
     } else {
       throw InternalError("Invalid unary operator: " + OP);
     }
