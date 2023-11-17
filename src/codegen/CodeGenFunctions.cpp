@@ -1553,17 +1553,21 @@ llvm::Value *ASTUnaryExpr::codegen() {
 
 llvm::Value *ASTIncDecStmt::codegen() {
     LOG_S(1) << "Generating code for " << *this;
+
+    lValueGen = true;
     Value *L = getLeft()->codegen();
-    Value* v = nullptr;
-    std::string op = getOp();
-    if(op == "++") {
-        v = Builder.CreateAdd(L, oneV, "inctmp");
-    } else if(op == "--") {
-        v = Builder.CreateSub(L, oneV, "dectmp");
+    lValueGen = false;
+
+    Value *expr = getLeft()->codegen();
+    Value *value;
+
+    if(getOp() == "++"){
+      value = Builder.CreateAdd(expr, oneV);
+    } else if (getOp() == "--"){
+      value = Builder.CreateSub(expr, oneV);
     } else {
-        throw InternalError("Invalid IncDec operator: " + op);
+      throw InternalError("failed to generate bitcode for ind/dec statement"); //LCOV_EXCL_LINE
     }
 
-    Builder.CreateStore(v, L);
-    return v;
+    return Builder.CreateStore(value, L);
 } // LCOV_EXCL_LINE
