@@ -1122,7 +1122,23 @@ llvm::Value *ASTReturnStmt::codegen() {
 } // LCOV_EXCL_LINE
 
 llvm::Value *ASTBoolExpr::codegen() {
-		return nullptr;
+    LOG_S(1) << "Generating code for " << *this;
+    std::string val = getValue();
+    if(val == "true")
+    {
+        return oneV;
+    }
+    else if(val == "false")
+    {
+        return zeroV;
+    }
+    else
+    {
+        throw InternalError(
+                "BoolExpr doesn't resolve to true or false");
+    }
+
+
 }
 
 llvm::Value *ASTTernaryExpr::codegen() {
