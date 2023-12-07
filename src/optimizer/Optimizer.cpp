@@ -11,9 +11,12 @@
 #include "llvm/Transforms/Scalar/SimplifyCFG.h"
 #include "llvm/Transforms/Utils/Mem2Reg.h"
 
-// P5 passes
+// demo P5 passes
 #include "llvm/Transforms/Scalar/LICM.h"
 #include "llvm/Transforms/Scalar/LoopDeletion.h"
+
+// D5 passes
+#include "llvm/Transforms/Scalar/LoopRotation.h"
 
 // For logging
 #include "loguru.hpp"
@@ -82,9 +85,18 @@ void Optimizer::optimize(llvm::Module *theModule,
   // Simplify the control flow graph (deleting unreachable blocks, etc).
   functionPassManager.addPass(llvm::SimplifyCFGPass());
 
+  /* ---------------- Added optimizations ---------------- */
+
+  // Did not extensively test, but brief testing seems to point towards LICM before LR better than switched
+
   if (contains(licm, enabledOpts)) {
     // Add loop invariant code motion
     loopPassManagerWithMSSA.addPass(llvm::LICMPass());
+  }
+
+  if (contains(lr, enabledOpts)) {
+    // Add loop rotation
+    loopPassManagerWithMSSA.addPass(llvm::LoopRotatePass(true));
   }
 
   if (contains(del, enabledOpts)) {

@@ -1,0 +1,31 @@
+/*
+ * Benchmark for loop rotation.
+ *
+ * Compile with and without the -lr optimization then run:
+ *   time ./lr 10000
+ * to observe the execution time of the benchmark.
+ *
+ * You should be able to see a 0.25 - 2x speedup with loop rotation.
+ *
+ * The improvement increases the more complex the program is. When nested loops are used like below,
+ * the improvement is larger (running time with 10000 yields about 2x improvement- from ~16s to ~8s on real and user.
+ * When there was only one loop, the improvement was much smaller but was still present.
+ */
+
+main(n) {
+    var i, result, temp;
+    i = 100000;
+    result = 0;
+    temp = 0;
+
+    while (i > 0) {
+        temp = i;
+        while (temp > 0) {
+            result = result + temp;
+            temp = temp - 1;
+        }
+        i = i - 1;
+    }
+
+    return 0;
+}
