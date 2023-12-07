@@ -14,44 +14,51 @@ using namespace llvm;
 using namespace std;
 
 static cl::OptionCategory
-    TIPcat("tipc Options",
-           "Options for controlling the TIP compilation process.");
+        TIPcat("tipc Options",
+               "Options for controlling the TIP compilation process.");
 static cl::opt<bool> ppretty("pp", cl::desc("pretty print"), cl::cat(TIPcat));
 static cl::opt<bool> psym("ps", cl::desc("print symbols"), cl::cat(TIPcat));
 static cl::opt<bool>
-    ptypes("pt", cl::desc("print symbols with types (supercedes --ps)"),
-           cl::cat(TIPcat));
+        ptypes("pt", cl::desc("print symbols with types (supercedes --ps)"),
+               cl::cat(TIPcat));
 static cl::opt<bool> polyinf("pi",
                              cl::desc("perform polymorphic type inference"),
                              cl::cat(TIPcat));
 static cl::opt<bool> disopt("do", cl::desc("disable bitcode optimization"),
                             cl::cat(TIPcat));
 static cl::opt<int> debug(
-    "verbose",
-    cl::desc("enable log messages (Levels 1-3) \n Level 1 - Basic logging for "
-             "every phase.\n Level 2 - Level 1 and type constraints being "
-             "unified.\n Level 3 - Level 2 and union-find solving steps."),
-    cl::cat(TIPcat));
+        "verbose",
+        cl::desc("enable log messages (Levels 1-3) \n Level 1 - Basic logging for "
+                 "every phase.\n Level 2 - Level 1 and type constraints being "
+                 "unified.\n Level 3 - Level 2 and union-find solving steps."),
+        cl::cat(TIPcat));
 static cl::opt<bool>
-    emitHrAsm("asm", cl::desc("emit human-readable LLVM assembly language"),
-              cl::cat(TIPcat));
+        emitHrAsm("asm", cl::desc("emit human-readable LLVM assembly language"),
+                  cl::cat(TIPcat));
 static cl::opt<std::string>
-    cgFile("pcg", cl::value_desc("call graph output file"),
-           cl::desc("print call graph to a file in dot syntax"),
-           cl::cat(TIPcat));
+        cgFile("pcg", cl::value_desc("call graph output file"),
+               cl::desc("print call graph to a file in dot syntax"),
+               cl::cat(TIPcat));
 static cl::opt<std::string>
-    astFile("pa", cl::value_desc("AST output file"),
-            cl::desc("print AST to a file in dot syntax"), cl::cat(TIPcat));
+        astFile("pa", cl::value_desc("AST output file"),
+                cl::desc("print AST to a file in dot syntax"), cl::cat(TIPcat));
 static cl::opt<std::string>
-    logfile("log", cl::value_desc("logfile"),
-            cl::desc("log all messages to logfile (enables --verbose 3)"),
-            cl::cat(TIPcat));
+        logfile("log", cl::value_desc("logfile"),
+                cl::desc("log all messages to logfile (enables --verbose 3)"),
+                cl::cat(TIPcat));
 static cl::opt<std::string> sourceFile(cl::Positional,
                                        cl::desc("<tip source file>"),
                                        cl::Required, cl::cat(TIPcat));
 static cl::opt<std::string> outputfile("o", cl::value_desc("outputfile"),
                                        cl::desc("write output to <outputfile>"),
                                        cl::cat(TIPcat));
+
+static cl::list<Optimization> OptimizationList(
+        cl::desc("Available Optimizations:"),
+        cl::values(
+                clEnumVal(licm, "Loop Invariant Code Motion"),
+                clEnumVal(del, "Loop Deletion")),
+        cl::cat(TIPcat));
 
 /*! \brief tipc driver.
  *
@@ -124,10 +131,10 @@ int main(int argc, char *argv[]) {
       }
 
       auto llvmModule =
-          CodeGenerator::generate(ast.get(), analysisResults.get(), sourceFile);
+              CodeGenerator::generate(ast.get(), analysisResults.get(), sourceFile);
 
       if (!disopt) {
-        Optimizer::optimize(llvmModule.get());
+        Optimizer::optimize(llvmModule.get(),OptimizationList);
       }
 
       if (emitHrAsm) {

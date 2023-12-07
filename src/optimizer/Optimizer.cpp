@@ -11,13 +11,23 @@
 #include "llvm/Transforms/Scalar/SimplifyCFG.h"
 #include "llvm/Transforms/Utils/Mem2Reg.h"
 
-// Extra Passes
-#include "llvm/Transforms/Scalar/SCCP.h"
-#include "llvm/Transforms/Scalar/SimpleLoopUnswitch.h"
-#include "llvm/Transforms/Scalar/TailRecursionElimination.h" //Tail Call Elimination
+// P5 passes
+#include "llvm/Transforms/Scalar/LICM.h"
+#include "llvm/Transforms/Scalar/LoopDeletion.h"
 
 // For logging
 #include "loguru.hpp"
+
+namespace { // Anonymous namespace for local function
+
+    bool contains(Optimization o, llvm::cl::list<Optimization> &l) {
+      for (unsigned i = 0; i != l.size(); ++i) {
+        if (o == l[i]) return true;
+      }
+      return false;
+    }
+
+}
 
 //  NOTE:
 //  We must use llvm Adaptors to run per-loop passes in the function pass
@@ -29,7 +39,8 @@
 //  eg: To run a loop pass on a module ->
 //  ModulePassManager.add(functionAdaptor(LoopAdaptor(llvm::LoopPass())))
 
-void Optimizer::optimize(llvm::Module *theModule) {
+void Optimizer::optimize(llvm::Module *theModule,
+                         llvm::cl::list<Optimization> &enabledOpts) {
   LOG_S(1) << "Optimizing program " << theModule->getName().str();
 
   // New pass builder
@@ -57,6 +68,8 @@ void Optimizer::optimize(llvm::Module *theModule) {
 
   llvm::ModulePassManager modulePassManager;
   llvm::FunctionPassManager functionPassManager;
+  llvm::LoopPassManager loopPassManagerWithMSSA;
+  llvm::LoopPassManager loopPassManager;
 
   // Adding passes to the pipeline
 
@@ -69,11 +82,28 @@ void Optimizer::optimize(llvm::Module *theModule) {
   // Simplify the control flow graph (deleting unreachable blocks, etc).
   functionPassManager.addPass(llvm::SimplifyCFGPass());
 
+  if (contains(licm, enabledOpts)) {
+    // Add loop invariant code motion
+    loopPassManagerWithMSSA.addPass(llvm::LICMPass());
+  }
+
+  if (contains(del, enabledOpts)) {
+    // Add loop deletion pass
+    loopPassManager.addPass(llvm::LoopDeletionPass());
+  }
+
+  // Add loop pass managers with and w/out MemorySSA
+  functionPassManager.addPass(
+          createFunctionToLoopPassAdaptor(std::move(loopPassManagerWithMSSA),true));
+
+  functionPassManager.addPass(
+          createFunctionToLoopPassAdaptor(std::move(loopPassManager)));
+
   // Passing the function pass manager to the modulePassManager using a function
   // adaptor, then passing theModule to the ModulePassManager along with
   // ModuleAnalysisManager.
 
   modulePassManager.addPass(
-      createModuleToFunctionPassAdaptor(std::move(functionPassManager)));
+          createModuleToFunctionPassAdaptor(std::move(functionPassManager), true));
   modulePassManager.run(*theModule, moduleAnalysisManager);
 }
