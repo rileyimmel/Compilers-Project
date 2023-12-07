@@ -17,6 +17,9 @@
 
 // D5 passes
 #include "llvm/Transforms/Scalar/LoopRotation.h"
+#include "llvm/Transforms/Scalar/SimpleLoopUnswitch.h"
+
+
 
 // For logging
 #include "loguru.hpp"
@@ -88,6 +91,11 @@ void Optimizer::optimize(llvm::Module *theModule,
   /* ---------------- Added optimizations ---------------- */
 
   // Did not extensively test, but brief testing seems to point towards LICM before LR better than switched
+
+  if (contains(slup, enabledOpts)) {
+    loopPassManagerWithMSSA.addPass(llvm::LICMPass());
+    loopPassManagerWithMSSA.addPass(llvm::SimpleLoopUnswitchPass());
+  }
 
   if (contains(licm, enabledOpts)) {
     // Add loop invariant code motion

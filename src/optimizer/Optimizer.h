@@ -4,7 +4,7 @@
 #include "llvm/Support/CommandLine.h"
 
 enum Optimization {
-    lr, licm, del
+    slup, lr, licm, del
 };
 
 /*! \class Optimizer
