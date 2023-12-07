@@ -96,7 +96,7 @@ void Optimizer::optimize(llvm::Module *theModule,
 
   if (contains(lr, enabledOpts)) {
     // Add loop rotation
-    loopPassManagerWithMSSA.addPass(llvm::LoopRotatePass(true));
+    loopPassManager.addPass(llvm::LoopRotatePass(true));
   }
 
   if (contains(del, enabledOpts)) {
