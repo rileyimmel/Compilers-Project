@@ -106,7 +106,12 @@ void Optimizer::optimize(llvm::Module *theModule,
     loopPassManager.addPass(llvm::LoopDeletionPass());
 
   } else {
-
+    if (contains(sccp, enabledOpts)) {
+        functionPassManager.addPass(llvm::SCCPPass());
+    }
+    if (contains(ipsccp, enabledOpts)) {
+        modulePassManager.addPass(llvm::IPSCCPPass());
+    }
 
     if (contains(slup, enabledOpts)) {
       // Expects LICM before it
@@ -133,13 +138,7 @@ void Optimizer::optimize(llvm::Module *theModule,
       // Add induction variable simplification
       loopPassManager.addPass(llvm::IndVarSimplifyPass());
     }
-    if (contains(sccp, enabledOpts)) {
-        // Performs function inlining
-        functionPassManager.addPass(llvm::SCCPPass());
-    }
-    if (contains(ipsccp, enabledOpts)) {
-        modulePassManager.addPass(llvm::IPSCCPPass());
-    }
+
   }
 
   // Add loop pass managers with and w/out MemorySSA
