@@ -18,7 +18,7 @@
 // D5 passes
 #include "llvm/Transforms/Scalar/LoopRotation.h"
 #include "llvm/Transforms/Scalar/SimpleLoopUnswitch.h"
-
+#include "llvm/Transforms/Scalar/IndVarSimplify.h"
 
 
 // For logging
@@ -110,6 +110,9 @@ void Optimizer::optimize(llvm::Module *theModule,
   if (contains(del, enabledOpts)) {
     // Add loop deletion pass
     loopPassManager.addPass(llvm::LoopDeletionPass());
+  }
+  if (contains(ivs, enabledOpts)) {
+      loopPassManager.addPass(llvm::IndVarSimplifyPass());
   }
 
   // Add loop pass managers with and w/out MemorySSA

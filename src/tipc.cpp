@@ -59,8 +59,8 @@ static cl::list<Optimization> OptimizationList(
                 clEnumVal(licm, "Loop Invariant Code Motion"),
                 clEnumVal(del, "Loop Deletion"),
                 clEnumVal(lr, "Loop Rotation"),
-                clEnumVal(slup, "Simple Loop Un-Switching")
-
+                clEnumVal(slup, "Simple Loop Un-Switching"),
+                clEnumVal(ivs, "Induction Variable Simplification")
                 ),
         cl::cat(TIPcat));
 
