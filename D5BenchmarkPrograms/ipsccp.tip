@@ -1,0 +1,39 @@
+/*
+ * Benchmark for function inlining.
+ *
+ * Compile with and without the -ivs optimization then run:
+ *   time ./inl 100000000
+ * to observe the execution time of the benchmark.
+ *
+ * When run with 100000000, you should be able to observe roughly a 525x speed up.
+ * When run with 10000000000, there is roughly a 13,109x speed up.
+ *
+ * As the parameter, n, is increased, the speed up will become more and more. However, if run with smaller
+ * values, there will be less speed up. For example, with 10,000, the speed is equal with and without the optimization.
+ * There does not appear to be a point though where compiling with is slower than without.
+ *
+ */
+
+ge(x, y) {
+    return x > y + x == y;
+}
+
+mod(x, y) {
+    while(ge(x,y)) {
+        x = x - y;
+    }
+    return x;
+}
+
+main() {
+    var result, x, y;
+    result = 100000000;
+    x = 12;
+
+    while(result > 0) {
+        y = y * mod(result, 37);
+        y = mod(y, 37);
+        result = result - 1;
+    }
+    return y;
+}

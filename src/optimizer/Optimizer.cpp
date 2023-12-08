@@ -19,7 +19,8 @@
 #include "llvm/Transforms/Scalar/LoopRotation.h"
 #include "llvm/Transforms/Scalar/SimpleLoopUnswitch.h"
 #include "llvm/Transforms/Scalar/IndVarSimplify.h"
-#include "llvm/Transforms/IPO/Inliner.h"
+#include "llvm/Transforms/IPO/SCCP.h"
+#include "llvm/Transforms/Scalar/SCCP.h"
 
 
 // For logging
@@ -81,6 +82,7 @@ void Optimizer::optimize(llvm::Module *theModule,
 
   // Adding passes to the pipeline
 
+  /*
   functionPassManager.addPass(llvm::PromotePass()); // New Reg2Mem
   functionPassManager.addPass(llvm::InstCombinePass());
   // Reassociate expressions.
@@ -89,6 +91,7 @@ void Optimizer::optimize(llvm::Module *theModule,
   functionPassManager.addPass(llvm::GVNPass());
   // Simplify the control flow graph (deleting unreachable blocks, etc).
   functionPassManager.addPass(llvm::SimplifyCFGPass());
+*/
 
   /* ---------------- Added optimizations ---------------- */
 
@@ -99,7 +102,8 @@ void Optimizer::optimize(llvm::Module *theModule,
     loopPassManagerWithMSSA.addPass(llvm::LICMPass());
     loopPassManagerWithMSSA.addPass(llvm::SimpleLoopUnswitchPass());
     loopPassManager.addPass(llvm::LoopDeletionPass());
-    callGraphSCCPassManager.addPass(llvm::InlinerPass());
+    functionPassManager.addPass(llvm::SCCPPass());
+    modulePassManager.addPass(llvm::IPSCCPPass());
   } else {
 
 
@@ -128,9 +132,12 @@ void Optimizer::optimize(llvm::Module *theModule,
       // Add induction variable simplification
       loopPassManager.addPass(llvm::IndVarSimplifyPass());
     }
-    if (contains(inl, enabledOpts)) {
+    if (contains(sccp, enabledOpts)) {
         // Performs function inlining
-        callGraphSCCPassManager.addPass(llvm::InlinerPass());
+        functionPassManager.addPass(llvm::SCCPPass());
+    }
+    if (contains(ipsccp, enabledOpts)) {
+        modulePassManager.addPass(llvm::IPSCCPPass());
     }
   }
 

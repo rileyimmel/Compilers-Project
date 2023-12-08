@@ -61,7 +61,10 @@ static cl::list<Optimization> OptimizationList(
                 clEnumVal(del, "Loop Deletion"),
                 clEnumVal(lr, "Loop Rotation"),
                 clEnumVal(slup, "Simple Loop Un-Switching"),
-                clEnumVal(ivs, "Induction Variable Simplification")
+                clEnumVal(ivs, "Induction Variable Simplification"),
+                clEnumVal(sccp, "Sparse Conditional Constant Propagation"),
+                clEnumVal(ipsccp, "Interprocedural Sparse Conditional Constant Propagation")
+
                 ),
         cl::cat(TIPcat));
 
