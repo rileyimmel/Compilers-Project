@@ -90,29 +90,41 @@ void Optimizer::optimize(llvm::Module *theModule,
 
   /* ---------------- Added optimizations ---------------- */
 
-  // Did not extensively test, but brief testing seems to point towards LICM before LR better than switched
 
-  if (contains(slup, enabledOpts)) {
+  if (contains(all, enabledOpts)) {
+    loopPassManager.addPass(llvm::IndVarSimplifyPass());
+    loopPassManager.addPass(llvm::LoopRotatePass(true));
     loopPassManagerWithMSSA.addPass(llvm::LICMPass());
     loopPassManagerWithMSSA.addPass(llvm::SimpleLoopUnswitchPass());
-  }
-
-  if (contains(licm, enabledOpts)) {
-    // Add loop invariant code motion
-    loopPassManagerWithMSSA.addPass(llvm::LICMPass());
-  }
-
-  if (contains(lr, enabledOpts)) {
-    // Add loop rotation
-    loopPassManager.addPass(llvm::LoopRotatePass(true));
-  }
-
-  if (contains(del, enabledOpts)) {
-    // Add loop deletion pass
     loopPassManager.addPass(llvm::LoopDeletionPass());
-  }
-  if (contains(ivs, enabledOpts)) {
+  } else {
+
+
+    if (contains(slup, enabledOpts)) {
+      // Expects LICM before it
+      loopPassManagerWithMSSA.addPass(llvm::LICMPass());
+      // Add loop un switching
+      loopPassManagerWithMSSA.addPass(llvm::SimpleLoopUnswitchPass());
+    }
+
+    if (contains(licm, enabledOpts)) {
+      // Add loop invariant code motion
+      loopPassManagerWithMSSA.addPass(llvm::LICMPass());
+    }
+
+    if (contains(lr, enabledOpts)) {
+      // Add loop rotation
+      loopPassManager.addPass(llvm::LoopRotatePass(true));
+    }
+
+    if (contains(del, enabledOpts)) {
+      // Add loop deletion pass
+      loopPassManager.addPass(llvm::LoopDeletionPass());
+    }
+    if (contains(ivs, enabledOpts)) {
+      // Add induction variable simplification
       loopPassManager.addPass(llvm::IndVarSimplifyPass());
+    }
   }
 
   // Add loop pass managers with and w/out MemorySSA

@@ -56,6 +56,7 @@ static cl::opt<std::string> outputfile("o", cl::value_desc("outputfile"),
 static cl::list<Optimization> OptimizationList(
         cl::desc("Available Optimizations:"),
         cl::values(
+                clEnumVal(all, "Enable all optional optimizations"),
                 clEnumVal(licm, "Loop Invariant Code Motion"),
                 clEnumVal(del, "Loop Deletion"),
                 clEnumVal(lr, "Loop Rotation"),
