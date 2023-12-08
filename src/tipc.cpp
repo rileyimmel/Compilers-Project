@@ -63,7 +63,8 @@ static cl::list<Optimization> OptimizationList(
                 clEnumVal(slup, "Simple Loop Un-Switching"),
                 clEnumVal(ivs, "Induction Variable Simplification"),
                 clEnumVal(sccp, "Sparse Conditional Constant Propagation"),
-                clEnumVal(ipsccp, "Interprocedural Sparse Conditional Constant Propagation")
+                clEnumVal(ipsccp, "Interprocedural Sparse Conditional Constant Propagation"),
+                clEnumVal(dead, "Dead Code Removal")
 
                 ),
         cl::cat(TIPcat));

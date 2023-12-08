@@ -22,6 +22,11 @@
 #include "llvm/Transforms/IPO/SCCP.h"
 #include "llvm/Transforms/Scalar/SCCP.h"
 
+#include "llvm/Transforms/Scalar/DCE.h"
+#include "llvm/Transforms/Scalar/DeadStoreElimination.h"
+#include "llvm/Transforms/IPO/DeadArgumentElimination.h"
+
+
 
 // For logging
 #include "loguru.hpp"
@@ -104,6 +109,9 @@ void Optimizer::optimize(llvm::Module *theModule,
     loopPassManagerWithMSSA.addPass(llvm::LICMPass());
     loopPassManagerWithMSSA.addPass(llvm::SimpleLoopUnswitchPass());
     loopPassManager.addPass(llvm::LoopDeletionPass());
+    functionPassManager.addPass(llvm::DCEPass());
+    modulePassManager.addPass(llvm::DeadArgumentEliminationPass(true));
+    functionPassManager.addPass(llvm::DSEPass());
 
   } else {
     if (contains(sccp, enabledOpts)) {
@@ -135,8 +143,13 @@ void Optimizer::optimize(llvm::Module *theModule,
       loopPassManager.addPass(llvm::LoopDeletionPass());
     }
     if (contains(ivs, enabledOpts)) {
-      // Add induction variable simplification
-      loopPassManager.addPass(llvm::IndVarSimplifyPass());
+        // Add induction variable simplification
+        loopPassManager.addPass(llvm::IndVarSimplifyPass());
+    }
+    if(contains(dead, enabledOpts)) {
+        functionPassManager.addPass(llvm::DCEPass());
+        modulePassManager.addPass(llvm::DeadArgumentEliminationPass(true));
+        functionPassManager.addPass(llvm::DSEPass());
     }
 
   }

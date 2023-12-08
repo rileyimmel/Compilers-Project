@@ -1,0 +1,36 @@
+/*
+ * Benchmark for various dead code elimination passes.
+ *
+ * Compile with and without the -dead optimization then run:
+ *   time ./dead 100000000
+ * to observe the execution time of the benchmark.
+ *
+ * When run with 100000000, you should be able to observe roughly a 0.5x speed up.
+ *
+ * As the parameter, n, is increased, the speed up will become more and more. However, if run with smaller
+ * values, there will be less speed up. For example, with 10,000, the speed is equal with and without the optimization.
+ * This should not be a mandatory speedup, though, because it seems there are points where the dead code elimination could be slower.
+ * I'm not quite sure why that is.
+ */
+
+ge(x, y) {
+    return x > y + x == y;
+}
+
+mod(x, y) {
+    while(ge(x,y)) {
+        x = x - y;
+    }
+    return x;
+}
+
+main(n) {
+    var result, x, y;
+    x = 99;
+
+    while(n > 0) {
+        y = mod(n, 37);
+        n = n - 1;
+    }
+    return 3;
+}
