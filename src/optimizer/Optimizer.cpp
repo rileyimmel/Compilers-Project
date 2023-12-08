@@ -19,6 +19,7 @@
 #include "llvm/Transforms/Scalar/LoopRotation.h"
 #include "llvm/Transforms/Scalar/SimpleLoopUnswitch.h"
 #include "llvm/Transforms/Scalar/IndVarSimplify.h"
+#include "llvm/Transforms/IPO/Inliner.h"
 
 
 // For logging
@@ -76,6 +77,7 @@ void Optimizer::optimize(llvm::Module *theModule,
   llvm::FunctionPassManager functionPassManager;
   llvm::LoopPassManager loopPassManagerWithMSSA;
   llvm::LoopPassManager loopPassManager;
+  llvm::CGSCCPassManager callGraphSCCPassManager;
 
   // Adding passes to the pipeline
 
@@ -97,6 +99,7 @@ void Optimizer::optimize(llvm::Module *theModule,
     loopPassManagerWithMSSA.addPass(llvm::LICMPass());
     loopPassManagerWithMSSA.addPass(llvm::SimpleLoopUnswitchPass());
     loopPassManager.addPass(llvm::LoopDeletionPass());
+    callGraphSCCPassManager.addPass(llvm::InlinerPass());
   } else {
 
 
@@ -124,6 +127,10 @@ void Optimizer::optimize(llvm::Module *theModule,
     if (contains(ivs, enabledOpts)) {
       // Add induction variable simplification
       loopPassManager.addPass(llvm::IndVarSimplifyPass());
+    }
+    if (contains(inl, enabledOpts)) {
+        // Performs function inlining
+        callGraphSCCPassManager.addPass(llvm::InlinerPass());
     }
   }
 
