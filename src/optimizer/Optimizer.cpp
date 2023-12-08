@@ -82,7 +82,7 @@ void Optimizer::optimize(llvm::Module *theModule,
 
   // Adding passes to the pipeline
 
-  /*
+
   functionPassManager.addPass(llvm::PromotePass()); // New Reg2Mem
   functionPassManager.addPass(llvm::InstCombinePass());
   // Reassociate expressions.
@@ -91,19 +91,20 @@ void Optimizer::optimize(llvm::Module *theModule,
   functionPassManager.addPass(llvm::GVNPass());
   // Simplify the control flow graph (deleting unreachable blocks, etc).
   functionPassManager.addPass(llvm::SimplifyCFGPass());
-*/
+
 
   /* ---------------- Added optimizations ---------------- */
 
 
   if (contains(all, enabledOpts)) {
+    functionPassManager.addPass(llvm::SCCPPass());
+    modulePassManager.addPass(llvm::IPSCCPPass());
     loopPassManager.addPass(llvm::IndVarSimplifyPass());
     loopPassManager.addPass(llvm::LoopRotatePass(true));
     loopPassManagerWithMSSA.addPass(llvm::LICMPass());
     loopPassManagerWithMSSA.addPass(llvm::SimpleLoopUnswitchPass());
     loopPassManager.addPass(llvm::LoopDeletionPass());
-    functionPassManager.addPass(llvm::SCCPPass());
-    modulePassManager.addPass(llvm::IPSCCPPass());
+
   } else {
 
 
